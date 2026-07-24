@@ -1,0 +1,30 @@
+# ============================================================
+# Development Profile Configuration
+# ============================================================
+
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+  datasource:
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/turfai_dev}
+    username: ${DATABASE_USERNAME:turfai}
+    password: ${DATABASE_PASSWORD:turfai}
+
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+  flyway:
+    clean-disabled: false
+
+logging:
+  level:
+    root: INFO
+    com.turfai.booking: DEBUG
+    org.springframework.web: INFO
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql: TRACE

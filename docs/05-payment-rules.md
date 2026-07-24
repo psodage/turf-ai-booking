@@ -1,8 +1,8 @@
 # Turf AI Booking — Payment Rules
 
 **Document:** 05-payment-rules.md  
-**Version:** 1.0  
-**Status:** Draft  
+**Version:** 3.0  
+**Status:** Approved  
 **Last Updated:** 2026-07-24
 
 ---
@@ -40,25 +40,34 @@ The payment engine owns payments.
 
 The payment gateway owns transaction execution.
 
+The system uses **Razorpay Payment Links** (not Orders API). Payment Links generate a URL that the customer opens in their mobile browser, completes payment, and the webhook fires. This is the only model that works for WhatsApp-only flows.
+
 Example:
 
 Customer
     ↓
 Booking Service
     ↓
-Create Booking Hold
+Create Booking (status = HOLD)
+    ↓
+Create Booking Hold (expires in 10 min)
     ↓
 Payment Service
+    ↓
+Create Payment Record (status = CREATED)
     ↓
 Payment Gateway
     ↓
 Webhook
     ↓
-Payment Service
+Payment Service (verify + update payment)
     ↓
 Booking Service
     ↓
-Confirm Booking
+Confirm Booking (status = CONFIRMED)
+
+Note: One booking can have multiple payment attempts (ADR-003).
+Only a successful payment confirms the booking.
 
 ---
 
@@ -112,11 +121,11 @@ Booking Hold
 
 Status:
 
-HELD
+ACTIVE
 
 Expires:
 
-10 Minutes
+10 Minutes (expires_at = NOW() + 10 min)
 
 Only after the hold exists should the payment link be generated.
 
@@ -687,6 +696,43 @@ Payment Success
 ↓
 
 Booking Confirmed
+
+---
+
+# 29. Payment Webhook Grace Period (ADR-016)
+
+A race condition exists between hold expiry cleanup and payment webhook delivery.
+
+```text
+Hold expires at 10:00:00
+    ↓
+Cleanup marks EXPIRED at 10:00:30
+    ↓
+Razorpay webhook arrives at 10:00:35 (payment SUCCESS)
+    ↓
+Booking is EXPIRED but customer paid
+```
+
+Resolution:
+
+```text
+Payment webhook received (status = SUCCESS)
+    ↓
+Check booking status
+    ↓
+If EXPIRED and hold.expires_at within last 60 seconds:
+    ↓
+    Check if slot was rebooked by another customer
+    ↓
+    If slot free → Reactivate hold, confirm booking
+    If slot taken → Initiate refund
+    ↓
+If EXPIRED for more than 60 seconds:
+    ↓
+    Initiate refund
+```
+
+This 60-second grace period prevents unnecessary refunds from timing edge cases.
 
 ---
 

@@ -1,8 +1,8 @@
 # Turf AI Booking — Error Handling & Recovery
 
 **Document:** 11-error-handling.md  
-**Version:** 1.0  
-**Status:** Approved Architecture  
+**Version:** 2.0  
+**Status:** Approved  
 **Last Updated:** 2026-07-24
 
 ---

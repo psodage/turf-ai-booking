@@ -1,8 +1,8 @@
 # Turf AI Booking — Payment Failure Conversation
 
 **Document:** conversations/payment-failure.md
-**Version:** 1.0
-**Status:** Production Ready
+**Version:** 2.0
+**Status:** Approved
 **Last Updated:** 2026-07-24
 
 ---
@@ -502,16 +502,15 @@ Our team has been notified.
 
 | Tool | Purpose |
 |------|----------|
-| createPaymentLink() | Generate payment URL |
-| verifyPaymentStatus() | Verify payment state |
-| verifyWebhookSignature() | Validate webhook |
-| confirmBooking() | Confirm booking |
-| releaseBookingHold() | Release slot |
-| createRefund() | Initiate refund |
-| retryRefund() | Retry failed refund |
-| notifyCustomer() | Send WhatsApp updates |
-| notifyOwner() | Notify turf owner |
-| auditPaymentEvent() | Store payment logs |
+| createPaymentLink | Generate payment URL |
+| verifyPaymentStatus | Verify payment state |
+| verifyWebhookSignature | Validate webhook |
+| confirmBooking | Confirm booking |
+| releaseBookingHold | Release slot |
+| createRefund | Initiate refund |
+| retryRefund | Retry failed refund |
+| notifyCustomer | Send WhatsApp updates |
+| notifyOwner | Notify turf owner |
 
 ---
 

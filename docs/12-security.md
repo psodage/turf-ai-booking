@@ -1,8 +1,8 @@
 # Turf AI Booking — Security Architecture
 
 **Document:** 12-security.md
-**Version:** 1.0
-**Status:** Approved Architecture
+**Version:** 2.0
+**Status:** Approved
 **Last Updated:** 2026-07-24
 
 ---
@@ -305,6 +305,28 @@ Currency
 Transaction ID
 
 Invalid events are rejected.
+
+---
+
+# 13a. Webhook Replay Protection (ADR-015)
+
+Signature verification prevents tampering but not replay attacks.
+
+All webhook handlers must also validate the **event timestamp**:
+
+- WhatsApp: check message timestamp from payload. Reject if older than 5 minutes.
+- Razorpay: check `created_at` from event payload. Reject if older than 5 minutes.
+
+Combined with:
+
+- Message deduplication (`whatsapp_message_id`)
+- Payment deduplication (`gateway_payment_id`)
+
+### Security Model Dependency
+
+The RBAC model depends entirely on Meta webhook signature integrity. WhatsApp phone numbers are trusted because Meta signs the webhook payload. If webhook verification is bypassed, the entire authentication model is compromised.
+
+> **Rule:** Never expose AI tool endpoints as public REST APIs without separate authentication.
 
 ---
 

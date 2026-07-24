@@ -1,12 +1,13 @@
 # Turf AI Booking — Development TODO
 
-> Version: 1.0
+> Version: 2.0
 > Status: Development Roadmap
 
 ---
 
 # Overall Progress
 
+- [x] Phase 0 - Documentation & Architecture
 - [ ] Phase 1 - Project Setup
 - [ ] Phase 2 - Database
 - [ ] Phase 3 - Booking Engine
@@ -14,9 +15,55 @@
 - [ ] Phase 5 - AI Agent
 - [ ] Phase 6 - Payment Gateway
 - [ ] Phase 7 - Reports
-- [ ] Phase 8 - Testing
-- [ ] Phase 9 - Deployment
-- [ ] Phase 10 - Pilot Launch
+- [ ] Phase 8 - Testing & Hardening
+- [ ] Phase 9 - Deployment & Pilot Launch
+
+---
+
+# Phase 0 — Documentation & Architecture
+
+## Documentation
+
+- [x] Product Vision
+- [x] Business Model
+- [x] RBAC
+- [x] Business Rules (complete)
+- [x] Payment Rules
+- [x] Owner Onboarding
+- [x] WhatsApp Integration
+- [x] AI Agent Architecture
+- [x] Database ERD
+- [x] Excel Reporting
+- [x] Error Handling
+- [x] Security Architecture
+- [x] Roadmap
+- [x] Conversation Flows
+- [x] Architecture Decision Records
+
+## Architecture Refinement
+
+- [x] Customer ownership model (ADR-002)
+- [x] Booking → Payment 1:N (ADR-003)
+- [x] Booking status simplification (ADR-004)
+- [x] Booking hold expiry mechanism (ADR-005)
+- [x] WhatsApp routing (ADR-006)
+- [x] Remove n8n from MVP (ADR-007)
+- [x] Pricing tiers standardized (ADR-008)
+- [x] Pilot size standardized (ADR-009)
+- [x] Cancellation refund rules (ADR-010)
+- [x] Tool name convention (ADR-011)
+- [x] Report storage strategy (ADR-012)
+- [x] Booking state machine fix (ADR-013)
+- [x] Simplified booking hold (ADR-014)
+- [x] Webhook replay protection (ADR-015)
+- [x] Payment webhook grace period (ADR-016)
+- [x] WhatsApp template messages (ADR-017)
+- [x] Conversation concurrency control (ADR-018)
+- [x] Business timezone (ADR-019)
+
+### Milestone
+
+✅ Documentation implementation-ready
 
 ---
 
@@ -24,17 +71,16 @@
 
 ## Repository
 
-- [ ] Create GitHub Repository
-- [ ] Configure README
-- [ ] Configure LICENSE
-- [ ] Configure .gitignore
+- [x] Create GitHub Repository
+- [x] Configure README
+- [x] Configure .gitignore
 - [ ] Create project structure
 
 ---
 
 ## Backend
 
-- [ ] Initialize Spring Boot
+- [ ] Initialize Spring Boot 3.5
 - [ ] Java 21
 - [ ] Maven
 - [ ] Spring Web
@@ -43,26 +89,26 @@
 - [ ] Validation
 - [ ] Lombok
 - [ ] PostgreSQL Driver
+- [ ] Flyway
 - [ ] Actuator
 
 ---
 
 ## Configuration
 
-- [ ] application.yml
+- [ ] application.yml (dev, staging, prod profiles)
 - [ ] Environment Variables
-- [ ] Profiles
-- [ ] Logging
-- [ ] Exception Handler
+- [ ] Logging (structured JSON)
+- [ ] Global Exception Handler
+- [ ] Correlation ID Filter (MDC)
+- [ ] Base Entity classes
 
 ---
 
 ## Docker
 
-- [ ] Dockerfile
-- [ ] docker-compose.yml
+- [ ] docker-compose.yml (Spring Boot + PostgreSQL)
 - [ ] PostgreSQL Container
-- [ ] pgAdmin Container
 
 ---
 
@@ -74,35 +120,32 @@
 
 # Phase 2 — Database
 
-## PostgreSQL
-
-- [ ] Install PostgreSQL
-- [ ] Create Database
-- [ ] Configure Connection
-
----
-
 ## Flyway
 
 - [ ] Configure Flyway
-- [ ] Initial Migration
-- [ ] Seed Data
+- [ ] Initial Migration (all core tables)
+- [ ] Seed Data (test business + turf)
 
 ---
 
 ## Tables
 
 - [ ] Business
+- [ ] Users
 - [ ] Turf
-- [ ] Customer
+- [ ] Operating Hours
+- [ ] Pricing Rule
 - [ ] Booking
 - [ ] Booking Hold
 - [ ] Payment
-- [ ] Slot
 - [ ] Blocked Slot
-- [ ] Pricing Rule
 - [ ] Conversation
-- [ ] Audit Log
+- [ ] Conversation Message
+- [ ] Notification
+- [ ] Booking Audit
+- [ ] Payment Audit
+- [ ] Report
+- [ ] System Setting
 
 ---
 
@@ -125,36 +168,60 @@
 
 ## Availability
 
-- [ ] Slot Generator
+- [ ] Slot Generator (from operating hours)
 - [ ] Slot Validator
 - [ ] Availability Checker
-- [ ] Alternative Slot Generator
+- [ ] Alternative Slot Suggestion
 
 ---
 
 ## Booking
 
-- [ ] Create Booking
-- [ ] Booking Hold
-- [ ] Confirm Booking
-- [ ] Cancel Booking
+- [ ] Create Booking (status = HOLD)
+- [ ] Create Booking Hold (simplified — ADR-014)
+- [ ] Booking number generation (PostgreSQL SEQUENCE)
+- [ ] Confirm Booking (on payment success)
+- [ ] Cancel Booking (with cancellation window check)
+- [ ] Payment webhook grace period logic (ADR-016)
 
 ---
 
 ## Conflict Prevention
 
-- [ ] Row Locking
+- [ ] Pessimistic Locking (SELECT FOR UPDATE)
 - [ ] Duplicate Prevention
 - [ ] Transaction Management
 
 ---
 
+## Hold Expiry (ADR-005)
+
+- [ ] Lazy expiry in queries (expires_at > NOW())
+- [ ] Scheduled cleanup task (@Scheduled, every 2 min)
+
+---
+
+## Concurrency (ADR-018)
+
+- [ ] Conversation lock (SELECT FOR UPDATE on conversation row)
+- [ ] Message deduplication (whatsapp_message_id)
+
+---
+
+## Timezone (ADR-019)
+
+- [ ] Business timezone field
+- [ ] Timezone-aware slot generation
+- [ ] Timezone-aware cancellation window check
+
+---
+
 ## Business Rules
 
-- [ ] Booking Window
-- [ ] Cancellation Window
-- [ ] Turf Timing
-- [ ] Pricing Logic
+- [ ] Booking Window (30 days advance)
+- [ ] Cancellation Window (2 hours)
+- [ ] Turf Operating Hours
+- [ ] Pricing Resolution (PEAK → WEEKEND → BASE)
 
 ---
 
@@ -177,9 +244,13 @@
 
 ## Webhook
 
-- [ ] Verify Webhook
-- [ ] Receive Messages
+- [ ] Verify Webhook (GET)
+- [ ] Receive Messages (POST)
+- [ ] Signature Verification
+- [ ] Webhook replay protection — timestamp validation (ADR-015)
+- [ ] Business Routing (phone_number_id → business_id, ADR-006)
 - [ ] Parse Messages
+- [ ] Message Deduplication (by whatsapp_message_id)
 - [ ] Store Conversations
 
 ---
@@ -189,13 +260,14 @@
 - [ ] Send Text
 - [ ] Send Interactive Buttons
 - [ ] Send Template Messages
+- [ ] Submit templates to Meta for approval (ADR-017)
 
 ---
 
-## Notifications
+## Notifications (all via template messages — ADR-017)
 
 - [ ] Booking Confirmation
-- [ ] Booking Reminder
+- [ ] Booking Reminder (@Scheduled)
 - [ ] Cancellation
 - [ ] Owner Alerts
 
@@ -213,36 +285,53 @@
 
 - [ ] OpenAI / Gemini Integration
 - [ ] Prompt Management
-- [ ] System Prompt
+- [ ] System Prompt (Customer AI)
+- [ ] System Prompt (Owner AI)
 - [ ] Context Builder
 
 ---
 
-## Tool Calling
+## Customer Tools (camelCase — ADR-011)
 
-- [ ] checkAvailability()
-- [ ] createBooking()
-- [ ] cancelBooking()
-- [ ] createBookingHold()
-- [ ] getPricing()
-- [ ] getLocation()
+- [ ] checkAvailability
+- [ ] getAvailableTurfs
+- [ ] createBookingHold
+- [ ] createPaymentLink
+- [ ] getMyBookings
+- [ ] cancelBooking
+- [ ] getPricing
+- [ ] getLocation
 
 ---
 
 ## Owner Tools
 
-- [ ] Today's Revenue
-- [ ] Today's Bookings
-- [ ] Weekly Report
-- [ ] Block Slot
+- [ ] getTodayBookings
+- [ ] getUpcomingBookings
+- [ ] blockSlot
+- [ ] unblockSlot
+- [ ] generateExcelReport
+- [ ] getRevenue
+- [ ] getBookingStatistics
+- [ ] updatePricing
 
 ---
 
 ## Memory
 
-- [ ] Conversation History
-- [ ] Context Window
-- [ ] Session Management
+- [ ] Conversation History (last 10 messages sliding window)
+- [ ] Context Window management
+- [ ] Session Management (30-min timeout)
+- [ ] Token budget per AI call (max 2000 tokens)
+- [ ] Token usage logging
+
+---
+
+## Tool Response Format
+
+- [ ] Standard success/error response structure
+- [ ] Error code mapping (SLOT_UNAVAILABLE, HOLD_EXPIRED, etc.)
+- [ ] AI prompt error handling instructions
 
 ---
 
@@ -254,21 +343,21 @@
 
 # Phase 6 — Payment Gateway
 
-## Razorpay
+## Razorpay Payment Links
 
-- [ ] Create Order
-- [ ] Payment Link
+- [ ] Create Payment Link (not Orders API)
 - [ ] Webhook
 - [ ] Signature Verification
+- [ ] Webhook replay protection — timestamp validation (ADR-015)
 
 ---
 
 ## Payment Logic
 
-- [ ] Pending
+- [ ] Multiple payment attempts per booking (ADR-003)
 - [ ] Success
 - [ ] Failed
-- [ ] Timeout
+- [ ] Timeout / Expired
 - [ ] Refund
 
 ---
@@ -276,8 +365,9 @@
 ## Booking Confirmation
 
 - [ ] Verify Payment
+- [ ] Check Hold (not expired)
 - [ ] Confirm Booking
-- [ ] Release Hold
+- [ ] Release Hold (convert to CONFIRMED)
 
 ---
 
@@ -309,7 +399,8 @@
 ## Delivery
 
 - [ ] WhatsApp Document
-- [ ] Email (Future)
+- [ ] Scheduled generation (@Scheduled — ADR-007)
+- [ ] Local filesystem storage (ADR-012)
 
 ---
 
@@ -319,31 +410,40 @@
 
 ---
 
-# Phase 8 — Testing
+# Phase 8 — Testing & Hardening
 
 ## Unit Tests
 
 - [ ] Booking Service
 - [ ] Payment Service
-- [ ] AI Service
+- [ ] Slot Service
 
 ---
 
 ## Integration Tests
 
-- [ ] Booking API
-- [ ] Payment API
-- [ ] Webhook
+- [ ] Booking API (Testcontainers)
+- [ ] Payment Webhook (WireMock)
+- [ ] WhatsApp Webhook
 - [ ] AI Tool Calls
 
 ---
 
 ## Edge Cases
 
-- [ ] Double Booking
+- [ ] Double Booking (concurrent)
 - [ ] Duplicate Payment
 - [ ] Duplicate Webhook
-- [ ] Hold Expiry
+- [ ] Hold Expiry Race Condition
+- [ ] Late Payment After Expiry
+
+---
+
+## Security Review
+
+- [ ] RBAC enforcement
+- [ ] Tenant isolation verification
+- [ ] Webhook signature verification
 
 ---
 
@@ -353,20 +453,20 @@
 
 ---
 
-# Phase 9 — Deployment
+# Phase 9 — Deployment & Pilot Launch
 
 ## Infrastructure
 
 - [ ] Railway / Render
 - [ ] Docker Deployment
-- [ ] PostgreSQL
+- [ ] PostgreSQL (managed)
 - [ ] Environment Variables
 
 ---
 
 ## Monitoring
 
-- [ ] Health Check
+- [ ] Health Check (Actuator)
 - [ ] Logging
 - [ ] Error Alerts
 
@@ -376,41 +476,21 @@
 
 - [ ] HTTPS
 - [ ] Rate Limiting
-- [ ] Secrets
+- [ ] Secrets Management
 
 ---
 
-### Milestone
+## Pilot (1 turf owner — ADR-009)
 
-✅ Production Ready
-
----
-
-# Phase 10 — Pilot Launch
-
-## Turf Owner
-
-- [ ] Onboard Turf
+- [ ] Onboard Turf Business
 - [ ] Configure Pricing
-- [ ] Configure Slots
-- [ ] Configure Payment
-
----
-
-## Testing
-
-- [ ] Live Booking
-- [ ] Live Payment
-- [ ] Live Cancellation
-- [ ] Excel Reports
-
----
-
-## Feedback
-
-- [ ] Customer Feedback
-- [ ] Owner Feedback
-- [ ] AI Improvements
+- [ ] Configure Operating Hours
+- [ ] Configure Payment Gateway
+- [ ] Live Booking Test
+- [ ] Live Payment Test
+- [ ] Live Cancellation Test
+- [ ] Excel Report Test
+- [ ] Collect Owner Feedback
 
 ---
 
@@ -420,20 +500,20 @@
 
 ---
 
-# Future
+# Future (Post-MVP)
 
 - [ ] Multi-Turf Support
 - [ ] Marathi AI
 - [ ] Hindi AI
 - [ ] Voice Booking
-- [ ] Google Calendar
-- [ ] Google Sheets
+- [ ] Google Calendar Sync
 - [ ] Dynamic Pricing
 - [ ] Mobile App
 - [ ] Web Dashboard
 - [ ] Analytics
 - [ ] Tournament Management
 - [ ] Subscription Billing
+- [ ] n8n Automation (if needed)
 
 ---
 
@@ -455,7 +535,7 @@ The MVP is complete when:
 
 # Progress Tracker
 
-Completed Tasks: **0 / 120**
+Completed Tasks: **~30 / 130** (documentation phase complete)
 
 Current Sprint:
 

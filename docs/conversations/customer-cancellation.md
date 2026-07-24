@@ -1,8 +1,8 @@
 # Turf AI Booking — Customer Cancellation Conversation
 
 **Document:** conversations/customer-cancellation.md
-**Version:** 1.0
-**Status:** Production Ready
+**Version:** 2.0
+**Status:** Approved
 **Last Updated:** 2026-07-24
 
 ---
@@ -279,17 +279,15 @@ Tool
 
 calculateRefund()
 
-Possible outcomes
+Possible outcomes (ADR-010)
 
-100%
+100% (cancelled ≥ 2 hours before start)
 
-50%
+0% (cancellation denied if < 2 hours before start)
 
-0%
+100% (owner-initiated cancellation)
 
-Future:
-
-Dynamic refund policies.
+Partial refunds (50%) are not supported in MVP.
 
 ---
 
@@ -469,14 +467,13 @@ Customer
 
 | Tool | Purpose |
 |------|----------|
-| getMyBookings() | Fetch customer bookings |
-| getBookingDetails() | Retrieve booking information |
-| checkCancellationEligibility() | Validate cancellation rules |
-| cancelBooking() | Cancel booking |
-| calculateRefund() | Determine refund amount |
-| createRefund() | Initiate payment gateway refund |
-| notifyOwner() | Notify turf owner |
-| updateReports() | Refresh reporting data |
+| getMyBookings | Fetch customer bookings |
+| getBookingDetails | Retrieve booking information |
+| checkCancellationEligibility | Validate cancellation rules |
+| cancelBooking | Cancel booking |
+| calculateRefund | Determine refund amount |
+| createRefund | Initiate payment gateway refund |
+| notifyOwner | Notify turf owner |
 
 ---
 

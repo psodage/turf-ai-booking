@@ -1,7 +1,7 @@
 # Turf AI Booking — Business Model
 
 **Document:** 02-business-model.md  
-**Version:** 1.0  
+**Version:** 2.0  
 **Status:** Draft / Validation Required  
 **Last Updated:** 2026-07-24  
 **Initial Market:** Kolhapur, Maharashtra, India
@@ -444,7 +444,7 @@ Potential costs include:
 - AI API usage
 - Backend hosting
 - Database hosting
-- n8n infrastructure
+- Scheduling (included in backend — ADR-007)
 - Payment gateway fees
 - File/report storage
 - Monitoring
@@ -576,7 +576,7 @@ Use:
 
 - Local Spring Boot
 - Local PostgreSQL
-- Local n8n
+- Local Docker
 - Payment sandbox
 - WhatsApp test environment
 - Free development tools
@@ -847,7 +847,7 @@ Initial target:
 
 Initial pilot:
 
-> 1–3 turf businesses.
+> 1 turf owner (ADR-009). Scale to 3 after validation.
 
 Initial pricing hypothesis:
 

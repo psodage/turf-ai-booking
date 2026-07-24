@@ -1,8 +1,8 @@
 # Turf AI Booking — Product Roadmap
 
 **Document:** 13-roadmap.md  
-**Version:** 1.0  
-**Status:** Final Roadmap  
+**Version:** 2.0  
+**Status:** Approved  
 **Last Updated:** 2026-07-24
 
 ---
@@ -367,7 +367,7 @@ OpenAI / Gemini
 
 Automation
 
-n8n (Optional)
+Spring @Scheduled (ADR-007 — n8n removed from MVP)
 
 Payments
 
@@ -435,7 +435,7 @@ Kolhapur
 
 Pilot Size:
 
-5 Turf Owners
+1 Turf Owner (ADR-009)
 
 Objectives:
 
@@ -508,13 +508,13 @@ Free
 
 Starter
 
-₹499/month
+₹999/month (ADR-008)
 
 ---
 
 Professional
 
-₹999/month
+₹1,999/month (ADR-008)
 
 ---
 
@@ -634,17 +634,11 @@ turf-ai-booking/
 
 ├── frontend/ (Future)
 
-├── n8n/
-
 ├── docs/
-
-├── scripts/
-
-├── docker/
 
 ├── .env.example
 
-├── docker-compose.yml
+├── docker-compose.yml (to be created)
 
 └── README.md
 

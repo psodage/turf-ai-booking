@@ -1,0 +1,24 @@
+# ============================================================
+# Staging Profile Configuration
+# ============================================================
+
+spring:
+  config:
+    activate:
+      on-profile: staging
+
+  datasource:
+    url: ${DATABASE_URL}
+    username: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
+
+  jpa:
+    show-sql: false
+
+  flyway:
+    clean-disabled: true
+
+logging:
+  level:
+    root: INFO
+    com.turfai.booking: INFO

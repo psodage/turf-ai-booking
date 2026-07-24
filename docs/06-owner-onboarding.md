@@ -1,8 +1,8 @@
 # Turf AI Booking — Owner Onboarding
 
 **Document:** 06-owner-onboarding.md  
-**Version:** 1.0  
-**Status:** Draft  
+**Version:** 2.0  
+**Status:** Approved  
 **Last Updated:** 2026-07-24
 
 ---
@@ -199,7 +199,9 @@ Each turf is created separately.
 
 # 9. Operating Hours Setup
 
-Owner configures:
+Owner configures operating hours **per turf** (not per business).
+
+Each turf has separate hours for each day of the week.
 
 Opening Time
 

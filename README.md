@@ -7,7 +7,6 @@ AI-powered WhatsApp booking system for football turf businesses.
 Turf AI Booking helps football turf owners manage their bookings through WhatsApp.
 
 Customers can:
-
 - Discover turf information
 - Check availability
 - View pricing
@@ -17,7 +16,6 @@ Customers can:
 - Cancel bookings according to the turf's policy
 
 Turf owners can use an AI-powered WhatsApp assistant to:
-
 - View today's bookings
 - View upcoming bookings
 - Check revenue
@@ -31,65 +29,106 @@ Kolhapur, Maharashtra, India.
 
 ## 🏗️ Architecture
 
+```text
 Customer
     ↓
 WhatsApp
     ↓
 WhatsApp Business Platform
     ↓
-AI Agent
-    ↓
 Spring Boot Backend
     ↓
-PostgreSQL
+AI Agent
     ↓
 Booking Engine
     ↓
-Payment Gateway
+Payment Gateway (Razorpay)
+    ↓
+PostgreSQL
+```
+
+## 🚀 Local Development
+
+### Prerequisites
+- **Java 21** SDK
+- **Maven 3.9+**
+- **Docker & Docker Compose**
+
+### Quick Start
+1. **Clone the repository:**
+   ```bash
+   git clone <repo-url>
+   cd turf-ai-booking
+   ```
+2. **Setup Environment Variables:**
+   ```bash
+   cp .env.example .env
+   ```
+3. **Start Database:**
+   ```bash
+   docker-compose up -d
+   ```
+4. **Run Spring Boot Application:**
+   ```bash
+   cd backend
+   ./mvnw spring-boot:run -Dspring-boot.run.profiles=dev
+   ```
+5. **Verify Health:**
+   ```bash
+   curl http://localhost:8080/actuator/health
+   ```
 
 ## 📂 Project Structure
 
-- `backend/` - Spring Boot backend
-- `frontend/` - React frontend for internal/admin tools
-- `n8n/` - Automation workflows
+- `backend/` - Spring Boot 3.5 application
 - `docs/` - Product and technical documentation
+- `frontend/` - React frontend for internal/admin tools (future)
 
 ## 🚧 Project Status
 
-Currently in planning and development.
+Implementation in progress. Phase 1 Foundation & Architecture active.
+See `PROJECT_STATUS.md` for current sprint status.
 
-## 🛠️ Planned Technology Stack
+## 🛠️ Technology Stack
 
 ### Backend
-
-- Java
-- Spring Boot
+- Java 21
+- Spring Boot 3.5
 - Spring Security
-- PostgreSQL
+- Spring Data JPA
+- PostgreSQL 16
+- Flyway (migrations)
 
 ### AI
-
-- LLM API
-- Tool calling / function calling
+- OpenAI / Gemini
+- Function / Tool calling
 
 ### Communication
-
-- WhatsApp Business Platform
+- WhatsApp Business Platform (Cloud API)
 
 ### Payments
-
-- Payment Gateway
-
-### Automation
-
-- n8n
+- Razorpay Payment Links
 
 ### Reporting
+- Apache POI (Excel)
 
-- Excel
+### Scheduling
+- Spring `@Scheduled`
+
+### Deployment
+- Docker & Docker Compose
+
+## 📋 Key Documentation
+
+| Document | Purpose |
+|----------|---------|
+| ARCHITECTURE.md | System architecture |
+| DECISIONS.md | Architecture Decision Records (19 ADRs) |
+| TODO.md | Development tasks |
+| PROJECT_STATUS.md | Current sprint |
+| docs/ | Business and technical specifications |
 
 ## 🔐 Security
 
 Secrets and credentials must be stored in environment variables.
-
 Never commit `.env` files or API keys to GitHub.

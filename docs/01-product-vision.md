@@ -1,8 +1,8 @@
 # Turf AI Booking — Product Vision
 
 **Document:** 01-product-vision.md  
-**Version:** 1.0  
-**Status:** Draft  
+**Version:** 2.0  
+**Status:** Approved  
 **Last Updated:** 2026-07-24  
 **Initial Market:** Kolhapur, Maharashtra, India  
 
@@ -771,7 +771,7 @@ The first pilot should focus on Kolhapur.
 
 Target:
 
-    1 turf owner
+    1 turf owner (ADR-009)
         ↓
     1 turf business
         ↓
@@ -926,12 +926,12 @@ AI Agent
     │
     └── Calls validated backend tools
 
-n8n
+Scheduling (Spring Boot @Scheduled — ADR-007)
     │
     ├── Notifications
     ├── Reminders
-    ├── Excel automation
-    └── Background workflows
+    ├── Report generation
+    └── Hold expiry cleanup
 
 Payment Gateway
     │

@@ -1,8 +1,8 @@
 # Turf AI Booking — WhatsApp Integration
 
 **Document:** 07-whatsapp.md  
-**Version:** 1.0  
-**Status:** Draft  
+**Version:** 3.0  
+**Status:** Approved  
 **Last Updated:** 2026-07-24
 
 ---
@@ -47,6 +47,7 @@ Webhook
         ▼
 Spring Boot API Gateway
         │
+        ├── Resolve Business (phone_number_id → business_id, see ADR-006)
         ├── Authentication
         ├── Authorization
         ├── Logging
@@ -56,10 +57,27 @@ Spring Boot API Gateway
                 ├── Booking Service
                 ├── Payment Service
                 ├── Notification Service
-                ├── Excel Service
-                └── n8n AI Workflow
+                └── Report Service
 
-Spring Boot is the entry point for all incoming WhatsApp messages.
+Spring Boot handles all services. No n8n in MVP (see ADR-007).
+
+---
+
+# 3a. 24-Hour Messaging Window (ADR-017)
+
+Meta enforces a 24-hour messaging window. After 24 hours from the customer's last message, only pre-approved **template messages** can be sent.
+
+| Message Type | Delivery Method |
+|-------------|----------------|
+| Active conversation response | Free-form text (within 24h window) |
+| Booking confirmation (after webhook) | Template message |
+| Booking reminder (2h before) | Template message |
+| Cancellation confirmation | Template message |
+| Owner notification | Template message |
+
+Template messages must be submitted to Meta for approval during Phase 4.
+
+All proactive outbound messages (reminders, confirmations after async processing, notifications) MUST use templates.
 
 ---
 

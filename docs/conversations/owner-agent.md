@@ -1,8 +1,8 @@
 # Turf AI Booking — Owner AI Agent Conversation
 
 **Document:** conversations/owner-agent.md
-**Version:** 1.0
-**Status:** Production Ready
+**Version:** 2.0
+**Status:** Approved
 **Last Updated:** 2026-07-24
 
 ---
@@ -559,20 +559,18 @@ Unauthorized users cannot access owner functions.
 
 | Tool | Purpose |
 |------|----------|
-| getTodayBookings() | List today's bookings |
-| getBookingDetails() | Booking information |
-| getRevenue() | Revenue summary |
-| getWeeklyRevenue() | Weekly revenue |
-| getMonthlyRevenue() | Monthly revenue |
-| blockSlot() | Block slot |
-| unblockSlot() | Unblock slot |
-| updatePricing() | Update pricing |
-| generateDailyExcel() | Generate daily report |
-| generateWeeklyExcel() | Generate weekly report |
-| searchCustomerBooking() | Customer lookup |
-| getBusinessSettings() | Business configuration |
-| getBookingStatistics() | Occupancy statistics |
-| generateBusinessInsights() | AI recommendations |
+| getTodayBookings | List today's bookings |
+| getBookingDetails | Booking information |
+| getRevenue | Revenue summary |
+| getWeeklyRevenue | Weekly revenue |
+| getMonthlyRevenue | Monthly revenue |
+| blockSlot | Block slot |
+| unblockSlot | Unblock slot |
+| updatePricing | Update pricing |
+| generateExcelReport | Generate report |
+| searchCustomerBooking | Customer lookup |
+| getBusinessSettings | Business configuration |
+| getBookingStatistics | Occupancy statistics |
 
 ---
 

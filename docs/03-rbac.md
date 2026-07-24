@@ -1,8 +1,8 @@
 # Turf AI Booking — Role-Based Access Control (RBAC)
 
 **Document:** 03-rbac.md  
-**Version:** 1.0  
-**Status:** Draft  
+**Version:** 2.0  
+**Status:** Approved  
 **Last Updated:** 2026-07-24  
 
 ---
@@ -448,12 +448,12 @@ The AI can only access information required to help the customer.
 The customer AI may have access to tools such as:
 
 ```text
-get_business_info
-get_turf_info
-get_pricing
-check_availability
-create_booking_hold
-create_payment_request
-get_my_booking
-cancel_my_booking
-get_location
+getBusinessInfo
+getTurfInfo
+getPricing
+checkAvailability
+createBookingHold
+createPaymentLink
+getMyBookings
+cancelBooking
+getLocation

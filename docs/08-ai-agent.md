@@ -1,8 +1,8 @@
 # Turf AI Booking — AI Agent Architecture
 
 **Document:** 08-ai-agent.md  
-**Version:** 1.0  
-**Status:** Architecture Approved  
+**Version:** 3.0  
+**Status:** Approved  
 **Last Updated:** 2026-07-24
 
 ---
@@ -62,11 +62,12 @@ Customer AI     Owner AI
       │              │
       └──────┬───────┘
              ▼
-      Tool Gateway
-             │
+       Tool Gateway
+              │
  ┌───────────┼────────────┐
  ▼           ▼            ▼
 Booking   Payment   Reporting
+(Spring Boot handles all — no n8n in MVP)
              │
              ▼
         PostgreSQL
@@ -260,7 +261,20 @@ Tool Definitions
 
 ↓
 
-User Message
+Last 10 messages
+
+Messages older than 10 are dropped from context. The conversation's `current_intent` and active booking ID provide continuity without full history.
+
+### Conversation Limits
+
+| Setting | Default |
+|---------|--------|
+| Max conversation turns per session | 20 |
+| Max tokens per AI call | 2000 |
+| Conversation timeout (inactivity) | 30 minutes |
+| Context window | Last 10 messages |
+
+Token usage per conversation should be logged for cost monitoring.
 
 ---
 
@@ -336,13 +350,14 @@ Notification Tools
 
 Available tools:
 
-- search_turfs
-- check_availability
-- create_booking_hold
-- create_payment
-- get_my_booking
-- cancel_booking
-- get_location
+- checkAvailability
+- getAvailableTurfs
+- createBookingHold
+- createPaymentLink
+- getMyBookings
+- cancelBooking
+- getPricing
+- getLocation
 
 ---
 
@@ -350,17 +365,61 @@ Available tools:
 
 Available tools:
 
-- get_today_bookings
-- get_upcoming_bookings
-- block_slot
-- unblock_slot
-- generate_excel
-- get_revenue
-- get_statistics
+- getTodayBookings
+- getUpcomingBookings
+- blockSlot
+- unblockSlot
+- generateExcelReport
+- getRevenue
+- getBookingStatistics
+- updatePricing
 
 ---
 
-# 18. AI Guardrails
+# 18. Tool Response Format
+
+All backend tools return a standard response to the AI.
+
+### Success
+
+```json
+{
+  "success": true,
+  "data": {
+    "booking_id": "...",
+    "status": "HOLD",
+    "expires_at": "..."
+  }
+}
+```
+
+### Error
+
+```json
+{
+  "success": false,
+  "error_code": "SLOT_UNAVAILABLE",
+  "message": "The requested slot is no longer available.",
+  "suggestions": ["18:00", "20:00", "21:00"]
+}
+```
+
+### Standard Error Codes
+
+| Code | Meaning | AI Action |
+|------|---------|-----------|
+| SLOT_UNAVAILABLE | Slot is booked or blocked | Suggest alternatives |
+| HOLD_EXPIRED | Booking hold timed out | Offer to rebook |
+| PAYMENT_FAILED | Payment did not complete | Offer retry |
+| OUTSIDE_HOURS | Slot is outside operating hours | Inform customer |
+| CANCELLATION_DENIED | Within cancellation window | Explain policy |
+| UNAUTHORIZED | User lacks permission | Inform user |
+
+The AI prompt includes handling instructions for each error code.
+
+---
+
+# 19. AI Guardrails
 
 The AI must never:
 
@@ -388,7 +447,7 @@ AI
 
 ↓
 
-check_availability()
+checkAvailability()
 
 ↓
 

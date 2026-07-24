@@ -1,8 +1,8 @@
 # Turf AI Booking — Customer Booking Conversation
 
 **Document:** conversations/customer-booking.md  
-**Version:** 1.0  
-**Status:** Production Ready  
+**Version:** 2.0  
+**Status:** Approved  
 **Last Updated:** 2026-07-24
 
 ---
@@ -659,16 +659,13 @@ All information must come from backend tools.
 
 | Tool | Purpose |
 |------|---------|
-| checkBookingDate() | Validate booking date |
-| validateSlot() | Validate slot timing |
-| getAvailableTurfs() | List available turfs |
-| checkAvailability() | Check slot availability |
-| suggestAlternativeSlots() | Suggest other slots |
-| createBookingHold() | Reserve slot temporarily |
-| createPaymentLink() | Generate payment link |
-| confirmBooking() | Confirm booking after payment |
-| getPricing() | Fetch pricing |
-| getLocation() | Fetch Google Maps location |
+| checkAvailability | Check slot availability |
+| getAvailableTurfs | List available turfs |
+| createBookingHold | Reserve slot temporarily |
+| createPaymentLink | Generate payment link |
+| confirmBooking | Confirm booking after payment |
+| getPricing | Fetch pricing |
+| getLocation | Fetch Google Maps location |
 
 ---
 

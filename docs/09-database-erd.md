@@ -1,7 +1,7 @@
 # Turf AI Booking — Database & ER Diagram
 
 **Document:** 09-database-erd.md
-**Version:** 1.0
+**Version:** 2.0
 **Status:** Approved Architecture
 **Database:** PostgreSQL 16+
 **ORM:** Spring Data JPA / Hibernate
@@ -55,7 +55,7 @@ The database must provide:
 ```text
 Business
    │
-   ├──────── Owner(User)
+   ├──────── Users (Owner, Manager)
    │
    ├──────── Turf
    │             │
@@ -67,12 +67,23 @@ Business
    │             │
    │             └──────── Booking
    │                        │
-   │                        ├──────── Payment
+   │                        ├──────── Payment (1:N)
+   │                        ├──────── Booking Hold (1:1)
    │                        ├──────── Booking Audit
-   │                        └──────── Customer(User)
+   │                        └──────── Users (Customer)
    │
-   └──────── Excel Reports
+   └──────── Reports
+
+Users (Customer)
+   │
+   └──────── Bookings (across any business)
+
+Conversation
+   │
+   └──────── Conversation Messages
 ```
+
+Key: Customers are NOT scoped to a single business. See ADR-002.
 
 ---
 
@@ -89,8 +100,6 @@ Separate schema per tenant (optional)
 ---
 
 # 5. Core Tables
-
-Core entities:
 
 ```
 business
@@ -151,6 +160,10 @@ google_maps_link
 
 phone
 
+whatsapp_phone_number_id
+
+timezone (e.g., Asia/Kolkata — ADR-019)
+
 status
 
 created_at
@@ -158,17 +171,15 @@ created_at
 updated_at
 ```
 
+`whatsapp_phone_number_id` maps this business to its WhatsApp Business phone number for webhook routing (see ADR-006).
+
+Status: `ACTIVE`, `INACTIVE`, `SUSPENDED`
+
 Relationship
 
-Business
+Business → Many Turfs (1:N)
 
-↓
-
-Many Turfs
-
-↓
-
-Many Users
+Business → Many Users (1:N, for OWNER and MANAGER roles)
 
 ---
 
@@ -184,13 +195,13 @@ Represents:
 Fields
 
 ```
-id
+id (UUID)
 
-business_id
+business_id (nullable — see rules below)
 
 name
 
-phone
+phone (unique)
 
 email
 
@@ -201,6 +212,8 @@ language
 status
 
 created_at
+
+updated_at
 ```
 
 Role
@@ -215,6 +228,18 @@ MANAGER
 ADMIN
 ```
 
+### business_id Rules (ADR-002)
+
+- OWNER: `business_id` is required. Owner belongs to one business.
+- MANAGER: `business_id` is required. Manager belongs to one business.
+- CUSTOMER: `business_id` is NULL. Customers are global. Their relationship to businesses is through bookings.
+- ADMIN: `business_id` is NULL. Admins are global.
+
+### Uniqueness
+
+- `phone` is unique across the entire table. One phone number = one user.
+- If a customer messages a new turf business, the existing user record is reused.
+
 ---
 
 # 8. TURF
@@ -224,9 +249,9 @@ Represents one playable turf.
 Fields
 
 ```
-id
+id (UUID)
 
-business_id
+business_id (required)
 
 name
 
@@ -237,28 +262,28 @@ capacity
 status
 
 created_at
+
+updated_at
 ```
+
+Status: `ACTIVE`, `INACTIVE`
 
 Examples
 
-Turf 1
+Turf 1 — 5v5
 
-5v5
-
-Turf 2
-
-7v7
+Turf 2 — 7v7
 
 ---
 
 # 9. OPERATING HOURS
 
-Stores daily opening hours.
+Stores daily opening hours per turf.
 
 Fields
 
 ```
-id
+id (UUID)
 
 turf_id
 
@@ -271,11 +296,12 @@ closing_time
 is_closed
 ```
 
-One Turf
+Rules:
 
-↓
-
-Many Operating Hour records
+- One Turf → 7 Operating Hour records (one per day).
+- Operating hours are per turf, not per business.
+- `day_of_week`: 0 (Monday) through 6 (Sunday).
+- `is_closed = true` means no bookings on that day.
 
 ---
 
@@ -286,30 +312,36 @@ Stores pricing.
 Fields
 
 ```
-id
+id (UUID)
 
 turf_id
 
 pricing_type
 
-day
+day_of_week (nullable)
 
-start_time
+start_time (nullable)
 
-end_time
+end_time (nullable)
 
 amount
+
+created_at
+
+updated_at
 ```
 
 Pricing Types
 
+```
 BASE
 
 WEEKEND
 
 PEAK
+```
 
-SPECIAL_DATE
+Resolution order: PEAK → WEEKEND → BASE (most specific wins).
 
 ---
 
@@ -320,9 +352,9 @@ Central table.
 Fields
 
 ```
-id
+id (UUID)
 
-booking_number
+booking_number (human-readable, e.g., BK-2026-00123)
 
 business_id
 
@@ -342,65 +374,111 @@ status
 
 booking_source
 
+cancelled_at (nullable — timestamp when cancelled)
+
+cancelled_by (nullable — user_id who cancelled)
+
 created_at
 
 updated_at
 ```
 
-Status
+### booking_number Generation
+
+Format: `BK-{YEAR}-{SEQUENCE}`
+
+Example: `BK-2026-00001`, `BK-2026-00002`
+
+- Uses a global PostgreSQL `SEQUENCE` (not per-business).
+- Sequence resets annually.
+- Collision-proof: database guarantees uniqueness.
+
+Status (see ADR-004)
 
 ```
-INITIATED
+HOLD
 
 PAYMENT_PENDING
 
 CONFIRMED
 
-CANCELLED
-
 COMPLETED
 
-NO_SHOW
-
 EXPIRED
+
+CANCELLED
+
+NO_SHOW
+```
+
+Booking Source
+
+```
+WHATSAPP_AI
+
+OWNER_MANUAL
+
+ADMIN
 ```
 
 ---
 
-# 12. BOOKING HOLD
+# 12. BOOKING HOLD (ADR-014)
 
-Temporary slot reservation.
+Temporary slot reservation linked to a booking.
+
+Slot data (turf_id, booking_date, start_time, end_time) is NOT duplicated here — it lives only on the `booking` table.
 
 Fields
 
 ```
-id
+id (UUID)
 
-booking_id
+booking_id (unique — one hold per booking)
 
 expires_at
 
 status
+
+created_at
 ```
 
 Status
 
+```
 ACTIVE
 
 EXPIRED
+
+CONVERTED (hold was converted to confirmed booking)
+```
+
+### Expiry (ADR-005)
+
+- `expires_at` is set to `NOW() + 10 minutes` on creation.
+- Lazy expiry: queries filter by `expires_at > NOW()`.
+- Cleanup job runs every 2 minutes to mark expired holds.
+
+### Grace Period (ADR-016)
+
+- If a payment webhook arrives within 60 seconds after hold expiry, the system attempts to re-acquire the slot before refunding.
 
 ---
 
 # 13. PAYMENT
 
-Stores payment.
+Stores payment attempts. One booking can have many payments (see ADR-003).
 
 Fields
 
 ```
-id
+id (UUID)
 
 booking_id
+
+business_id
+
+customer_id
 
 gateway
 
@@ -414,11 +492,16 @@ currency
 
 status
 
+refund_status
+
 created_at
+
+updated_at
 ```
 
 Status
 
+```
 CREATED
 
 PENDING
@@ -427,18 +510,39 @@ SUCCESS
 
 FAILED
 
-REFUNDED
+EXPIRED
+```
+
+Refund Status
+
+```
+NOT_REQUIRED
+
+REQUESTED
+
+PROCESSING
+
+SUCCESS
+
+FAILED
+```
+
+### Relationship (ADR-003)
+
+- Booking → Payment is **1:N** (one booking, many payment attempts).
+- Only a payment with `status = SUCCESS` confirms the booking.
+- Failed and expired payments remain as records for audit.
 
 ---
 
 # 14. BLOCKED SLOT
 
-Owner blocked periods.
+Owner-blocked periods.
 
 Fields
 
 ```
-id
+id (UUID)
 
 turf_id
 
@@ -449,15 +553,21 @@ start_time
 end_time
 
 reason
+
+created_by
+
+created_at
 ```
 
 Reason
 
+```
 MAINTENANCE
 
 PRIVATE_EVENT
 
 OWNER_USE
+```
 
 ---
 
@@ -468,7 +578,7 @@ Stores WhatsApp conversations.
 Fields
 
 ```
-id
+id (UUID)
 
 user_id
 
@@ -481,7 +591,11 @@ current_intent
 status
 
 last_activity
+
+created_at
 ```
+
+Status: `ACTIVE`, `CLOSED`, `EXPIRED`
 
 ---
 
@@ -492,17 +606,17 @@ Stores messages.
 Fields
 
 ```
-id
+id (UUID)
 
 conversation_id
 
-sender
+sender (USER or AI)
 
 message
 
-message_type
+message_type (TEXT, BUTTON, LIST, LOCATION)
 
-whatsapp_message_id
+whatsapp_message_id (for deduplication)
 
 created_at
 ```
@@ -516,17 +630,25 @@ Stores notifications.
 Fields
 
 ```
-id
+id (UUID)
 
 user_id
 
-booking_id
+booking_id (nullable)
 
-channel
+business_id
 
-status
+type (BOOKING_CONFIRMED, REMINDER, CANCELLATION, etc.)
+
+channel (WHATSAPP)
+
+status (PENDING, SENT, FAILED)
+
+retry_count
 
 sent_at
+
+created_at
 ```
 
 ---
@@ -538,7 +660,7 @@ Booking history.
 Fields
 
 ```
-id
+id (UUID)
 
 booking_id
 
@@ -546,7 +668,9 @@ old_status
 
 new_status
 
-changed_by
+changed_by (user_id)
+
+reason
 
 changed_at
 ```
@@ -560,13 +684,13 @@ Payment events.
 Fields
 
 ```
-id
+id (UUID)
 
 payment_id
 
 event
 
-gateway_payload
+gateway_payload (JSON)
 
 created_at
 ```
@@ -580,16 +704,20 @@ Generated reports.
 Fields
 
 ```
-id
+id (UUID)
 
 business_id
 
-report_type
+report_type (DAILY, WEEKLY, MONTHLY)
 
 file_path
 
+generated_by (user_id, nullable)
+
 generated_at
 ```
+
+Reports are stored as temporary files on local filesystem (see ADR-012).
 
 ---
 
@@ -600,7 +728,7 @@ Stores configurable values.
 Fields
 
 ```
-key
+key (primary key)
 
 value
 
@@ -611,61 +739,31 @@ description
 
 # 22. Relationships
 
-Business
+Business → Users: 1:N (for OWNER, MANAGER roles)
 
-↓
+Business → Turfs: 1:N
 
-Users
+Turf → Operating Hours: 1:N (7 per turf)
 
-1:N
+Turf → Pricing Rules: 1:N
 
-Business
+Turf → Blocked Slots: 1:N
 
-↓
+Turf → Bookings: 1:N
 
-Turfs
+Customer → Bookings: 1:N (across any business)
 
-1:N
+Booking → Booking Hold: 1:1
 
-Turf
+Booking → Payments: **1:N** (see ADR-003)
 
-↓
+Booking → Booking Audit: 1:N
 
-Bookings
+Payment → Payment Audit: 1:N
 
-1:N
+Conversation → Messages: 1:N
 
-Customer
-
-↓
-
-Bookings
-
-1:N
-
-Booking
-
-↓
-
-Payment
-
-1:1
-
-Booking
-
-↓
-
-Booking Audit
-
-1:N
-
-Conversation
-
-↓
-
-Messages
-
-1:N
+Business → Reports: 1:N
 
 ---
 
@@ -685,13 +783,9 @@ Overlapping Time
 
 AND
 
-Status IN
+Status IN (`HOLD`, `PAYMENT_PENDING`, `CONFIRMED`)
 
-```
-PAYMENT_PENDING
-
-CONFIRMED
-```
+This includes HOLD status (see ADR-004) to prevent double-holds.
 
 ---
 
@@ -700,39 +794,32 @@ CONFIRMED
 Unique logical booking:
 
 ```
-(turf_id,
-booking_date,
-start_time,
-end_time)
+(turf_id, booking_date, start_time, end_time)
 ```
 
-Applied only to active bookings.
+Applied only to bookings with status IN (`HOLD`, `PAYMENT_PENDING`, `CONFIRMED`).
+
+Implementation: partial unique index or exclusion constraint.
 
 ---
 
 # 25. Booking Transaction
 
+```text
 Booking Request
-
-↓
-
+    ↓
 Start Transaction
-
-↓
-
-Lock Turf Slot
-
-↓
-
-Check Existing Booking
-
-↓
-
-Create Hold
-
-↓
-
+    ↓
+Lock Turf Slot (SELECT ... FOR UPDATE)
+    ↓
+Check Existing Active Booking
+    ↓
+Create Booking (status = HOLD)
+    ↓
+Create Booking Hold (expires_at = NOW() + 10 min)
+    ↓
 Commit
+```
 
 ---
 
@@ -740,10 +827,8 @@ Commit
 
 Use:
 
-```
-SELECT ...
-
-FOR UPDATE
+```sql
+SELECT ... FOR UPDATE
 ```
 
 during booking creation.
@@ -769,20 +854,27 @@ Pessimistic Locking
 Important indexes:
 
 ```
-booking
-
-(turf_id,
-booking_date)
+booking(turf_id, booking_date)
 
 booking(customer_id)
+
+booking(business_id, status)
+
+booking_hold(status, expires_at) — status first for equality, expires_at for range
+
+payment(booking_id)
+
+payment(gateway_payment_id) — for deduplication
 
 payment(status)
 
 users(phone)
 
-conversation(user_id)
+conversation(user_id, business_id)
 
-blocked_slot(turf_id,date)
+blocked_slot(turf_id, date)
+
+business(whatsapp_phone_number_id)
 ```
 
 ---
@@ -799,15 +891,7 @@ Audit
 
 Instead:
 
-status
-
-↓
-
-DELETED
-
-or
-
-INACTIVE
+status → `DELETED` or `INACTIVE`
 
 ---
 
@@ -815,41 +899,29 @@ INACTIVE
 
 Every status change recorded.
 
-Booking Created
-
-↓
-
-Hold
-
-↓
-
-Payment
-
-↓
-
+```text
+Booking Created (HOLD)
+    ↓
+Payment Pending
+    ↓
 Confirmed
-
-↓
-
+    ↓
 Completed
+```
+
+Each transition creates a `booking_audit` entry.
 
 ---
 
-# 31. Excel Reporting
+# 31. Reporting
 
 Reports generated from:
 
-Booking
+Booking, Payment, Users, Business tables.
 
-Payment
+Metadata stored in: `report` table.
 
-Users
-
-Business
-
-Stored in:
-
-report table
+Files stored on: local filesystem (see ADR-012).
 
 ---
 
@@ -869,9 +941,9 @@ Current schema sufficient.
 
 Every query filters:
 
-business_id
+`business_id`
 
-Customer never accesses another business.
+Customer never accesses another business's data.
 
 ---
 
@@ -883,17 +955,13 @@ Every business-owned table contains:
 business_id
 ```
 
-Examples:
+Tables with `business_id`:
 
-Booking
+Turf, Booking, Payment, Blocked Slot, Conversation, Notification, Report
 
-Turf
+Tables WITHOUT `business_id`:
 
-Users
-
-Pricing
-
-Reports
+Users (customers are global — see ADR-002), System Setting
 
 ---
 
@@ -927,21 +995,13 @@ rating
 
 # 36. Database Naming Convention
 
-Tables:
+Tables: snake_case
 
-snake_case
+Columns: snake_case
 
-Columns:
+Primary Key: id
 
-snake_case
-
-Primary Key:
-
-id
-
-Foreign Keys:
-
-*_id
+Foreign Keys: *_id
 
 ---
 
@@ -975,21 +1035,13 @@ deleted_at
 
 # 39. Data Retention
 
-Bookings:
+Bookings: Never deleted.
 
-Never deleted.
+Payments: Never deleted.
 
-Payments:
+Audit: Never deleted.
 
-Never deleted.
-
-Audit:
-
-Never deleted.
-
-Conversation:
-
-Retained according to business policy.
+Conversations: Retained according to business policy.
 
 ---
 
@@ -1001,13 +1053,15 @@ The MVP database supports:
 
 ✓ Multi-turf
 
-✓ WhatsApp AI
+✓ Global customers (ADR-002)
 
-✓ Payments
+✓ Payment retries (ADR-003)
+
+✓ Booking hold expiry (ADR-005)
+
+✓ WhatsApp routing (ADR-006)
 
 ✓ Reports
-
-✓ Booking Holds
 
 ✓ Conflict Prevention
 
@@ -1019,18 +1073,4 @@ The MVP database supports:
 
 ---
 
-# 41. Next Document
-
-The next document is:
-
-docs/10-excel-report.md
-
-This document defines:
-
-- Excel workbook structure
-- Daily reports
-- Monthly reports
-- Revenue reports
-- Booking summaries
-- Owner exports
-- AI-generated Excel files
+# End of Document
