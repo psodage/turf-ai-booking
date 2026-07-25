@@ -58,9 +58,14 @@ spring:
       fail-on-unknown-properties: false
     time-zone: UTC
 
+  # ---- Lifecycle ----
+  lifecycle:
+    timeout-per-shutdown-phase: 20s
+
 # ---- Server ----
 server:
   port: ${SERVER_PORT:8080}
+  shutdown: graceful
   servlet:
     context-path: /
   error:
@@ -73,7 +78,7 @@ management:
   endpoints:
     web:
       exposure:
-        include: health,info
+        include: health,info,metrics,prometheus
       base-path: /actuator
   endpoint:
     health:

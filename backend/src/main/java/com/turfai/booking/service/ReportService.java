@@ -333,4 +333,39 @@ public class ReportService {
                 .generatedByUserId(r.getGeneratedBy() != null ? r.getGeneratedBy().getId() : null)
                 .build();
     }
+
+    @Transactional(readOnly = true)
+    public com.turfai.booking.dto.report.DashboardSummaryResponse getDashboardSummary(UUID businessId, LocalDate date) {
+        Business business = businessRepository.findById(businessId)
+                .orElseThrow(() -> new BaseException(ErrorCode.RESOURCE_NOT_FOUND, "Business not found with ID: " + businessId) {});
+
+        List<Booking> bookings = bookingRepository.findByBusinessIdAndBookingDate(businessId, date);
+        int totalBookings = bookings.size();
+
+        int confirmed = (int) bookings.stream()
+                .filter(b -> b.getStatus() == BookingStatus.CONFIRMED || b.getStatus() == BookingStatus.COMPLETED)
+                .count();
+
+        int cancelled = (int) bookings.stream()
+                .filter(b -> b.getStatus() == BookingStatus.CANCELLED)
+                .count();
+
+        BigDecimal totalRevenue = bookings.stream()
+                .filter(b -> b.getStatus() == BookingStatus.CONFIRMED || b.getStatus() == BookingStatus.COMPLETED)
+                .map(Booking::getPrice)
+                .filter(Objects::nonNull)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        double occupancyPercentage = totalBookings > 0 ? Math.min(100.0, ((double) confirmed / 16.0) * 100.0) : 0.0;
+
+        return com.turfai.booking.dto.report.DashboardSummaryResponse.builder()
+                .businessId(business.getId())
+                .date(date)
+                .totalBookings(totalBookings)
+                .confirmedBookings(confirmed)
+                .cancelledBookings(cancelled)
+                .totalRevenue(totalRevenue)
+                .occupancyPercentage(occupancyPercentage)
+                .build();
+    }
 }

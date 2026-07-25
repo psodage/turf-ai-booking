@@ -274,6 +274,52 @@ public class BookingService {
         return mapToBookingResponse(booking);
     }
 
+    /**
+     * Marks a confirmed booking as COMPLETED (ADR-013).
+     */
+    @Transactional
+    public BookingResponse completeBooking(UUID bookingId, UUID ownerId) {
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new BookingNotFoundException("Booking not found with ID: " + bookingId));
+
+        if (booking.getStatus() != BookingStatus.CONFIRMED) {
+            throw new BaseException(ErrorCode.INVALID_REQUEST, "Only CONFIRMED bookings can be marked COMPLETED.") {};
+        }
+
+        User owner = userRepository.findById(ownerId)
+                .orElseThrow(() -> new BaseException(ErrorCode.RESOURCE_NOT_FOUND, "User not found with ID: " + ownerId) {});
+
+        BookingStatus oldStatus = booking.getStatus();
+        booking.setStatus(BookingStatus.COMPLETED);
+        bookingRepository.save(booking);
+
+        logAudit(booking, oldStatus, BookingStatus.COMPLETED, owner, "Marked completed by owner");
+        return mapToBookingResponse(booking);
+    }
+
+    /**
+     * Marks a confirmed booking as NO_SHOW (ADR-013).
+     */
+    @Transactional
+    public BookingResponse markNoShow(UUID bookingId, UUID ownerId) {
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new BookingNotFoundException("Booking not found with ID: " + bookingId));
+
+        if (booking.getStatus() != BookingStatus.CONFIRMED) {
+            throw new BaseException(ErrorCode.INVALID_REQUEST, "Only CONFIRMED bookings can be marked NO_SHOW.") {};
+        }
+
+        User owner = userRepository.findById(ownerId)
+                .orElseThrow(() -> new BaseException(ErrorCode.RESOURCE_NOT_FOUND, "User not found with ID: " + ownerId) {});
+
+        BookingStatus oldStatus = booking.getStatus();
+        booking.setStatus(BookingStatus.NO_SHOW);
+        bookingRepository.save(booking);
+
+        logAudit(booking, oldStatus, BookingStatus.NO_SHOW, owner, "Marked no-show by owner");
+        return mapToBookingResponse(booking);
+    }
+
     @Transactional(readOnly = true)
     public AlternativeSlotsResponse suggestAlternativeSlots(UUID turfId, LocalDate date) {
         DaySlotsResponse daySlots = slotService.getAvailableSlots(turfId, date);
