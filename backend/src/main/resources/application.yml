@@ -87,6 +87,15 @@ info:
     version: 0.1.0
     description: AI-powered WhatsApp booking system
 
+# ---- WhatsApp Business API ----
+whatsapp:
+  api-url: ${WHATSAPP_API_URL:https://graph.facebook.com/v20.0}
+  phone-number-id: ${WHATSAPP_PHONE_NUMBER_ID:PHONE_NUM_ID_DEMO_001}
+  business-account-id: ${WHATSAPP_BUSINESS_ACCOUNT_ID:BIZ_ACCT_ID_DEMO_001}
+  access-token: ${WHATSAPP_ACCESS_TOKEN:demo_access_token}
+  verify-token: ${WHATSAPP_VERIFY_TOKEN:turfai_verify_token_dev}
+  app-secret: ${WHATSAPP_APP_SECRET:turfai_app_secret_dev}
+
 # ---- Logging ----
 logging:
   level:

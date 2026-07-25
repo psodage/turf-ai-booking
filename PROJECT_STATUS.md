@@ -6,11 +6,11 @@
 
 ## Current Phase
 
-➡️ Phase 4 — WhatsApp Integration
+➡️ Phase 5 — AI Agent
 
 ## Status
 
-Phase 3 Booking Engine complete. Slot generation, pricing resolution, booking holds, payment confirmations, cancellations, hold cleanup scheduler, REST APIs, OpenAPI/Swagger docs, and multi-threaded double-booking prevention verified.
+Phase 4 WhatsApp Integration complete. Meta Cloud API configuration, GET webhook verification handshake, POST event receiver, HMAC-SHA256 signature verification, 5-minute replay protection (ADR-015), business routing by phone_number_id (ADR-006), customer auto-registration (ADR-002), message deduplication, conversation write locking (ADR-018), and outbound messaging (text, interactive buttons, lists, templates, documents) implemented and verified with unit tests.
 
 ## Completed
 
@@ -46,10 +46,15 @@ Phase 3 Booking Engine complete. Slot generation, pricing resolution, booking ho
 - [x] Phase 3 Hold Cleanup: 2-minute background scheduler (@Scheduled) for auto-expiring holds
 - [x] Phase 3 REST APIs & OpenAPI: SlotController, BookingController, BlockedSlotController with Swagger UI (/swagger-ui.html)
 - [x] Phase 3 Concurrency Verification: Multi-threaded BookingConcurrencyTest verifying double-booking prevention under concurrent load
+- [x] Phase 4 WhatsApp Webhook: GET verification handshake & POST event receiver (/webhook/whatsapp)
+- [x] Phase 4 Security: HMAC-SHA256 signature verification (X-Hub-Signature-256) & 5-minute replay protection (ADR-015)
+- [x] Phase 4 Routing & Identity: Business routing by phone_number_id (ADR-006), customer auto-registration (ADR-002), wamid deduplication (ADR-015)
+- [x] Phase 4 Session Concurrency: ConversationService with pessimistic write lock (SELECT FOR UPDATE, ADR-018)
+- [x] Phase 4 Outbound Service: WhatsAppService for text, interactive buttons, list options, templates (ADR-017), and documents
 
 ## Next
 
-➡️ Phase 4 — WhatsApp Integration (Meta Cloud API, Webhooks, Signature Verification, Message Parsing & Deduplication)
+➡️ Phase 5 — AI Agent (Spring AI / LangChain4j, Tool Calling, System Prompts, Intent Routing, Context Builder)
 
 ## Blockers
 
@@ -57,8 +62,8 @@ None.
 
 ## Notes
 
-- All 19 ADRs and ERD specifications fully reflected in booking engine service layer.
-- All 12 unit and integration tests pass cleanly.
+- All 19 ADRs and ERD specifications fully reflected in WhatsApp integration layer.
+- All 19 unit and integration tests pass cleanly.
 
 ---
 

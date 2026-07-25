@@ -235,41 +235,41 @@
 
 ## Meta Cloud API
 
-- [ ] Create Meta App
-- [ ] Configure Webhook
-- [ ] Verify Token
-- [ ] Access Token
+- [x] Create Meta App
+- [x] Configure Webhook
+- [x] Verify Token
+- [x] Access Token
 
 ---
 
 ## Webhook
 
-- [ ] Verify Webhook (GET)
-- [ ] Receive Messages (POST)
-- [ ] Signature Verification
-- [ ] Webhook replay protection — timestamp validation (ADR-015)
-- [ ] Business Routing (phone_number_id → business_id, ADR-006)
-- [ ] Parse Messages
-- [ ] Message Deduplication (by whatsapp_message_id)
-- [ ] Store Conversations
+- [x] Verify Webhook (GET)
+- [x] Receive Messages (POST)
+- [x] Signature Verification
+- [x] Webhook replay protection — timestamp validation (ADR-015)
+- [x] Business Routing (phone_number_id → business_id, ADR-006)
+- [x] Parse Messages
+- [x] Message Deduplication (by whatsapp_message_id)
+- [x] Store Conversations
 
 ---
 
 ## Messaging
 
-- [ ] Send Text
-- [ ] Send Interactive Buttons
-- [ ] Send Template Messages
-- [ ] Submit templates to Meta for approval (ADR-017)
+- [x] Send Text
+- [x] Send Interactive Buttons
+- [x] Send Template Messages
+- [x] Submit templates to Meta for approval (ADR-017)
 
 ---
 
 ## Notifications (all via template messages — ADR-017)
 
-- [ ] Booking Confirmation
-- [ ] Booking Reminder (@Scheduled)
-- [ ] Cancellation
-- [ ] Owner Alerts
+- [x] Booking Confirmation
+- [x] Booking Reminder (@Scheduled)
+- [x] Cancellation
+- [x] Owner Alerts
 
 ---
 
