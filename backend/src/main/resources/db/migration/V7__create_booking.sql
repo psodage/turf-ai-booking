@@ -51,9 +51,8 @@ CREATE INDEX idx_booking_business_status ON booking(business_id, status);
 -- ADR-004: Conflict check only applies to active statuses.
 -- EXPIRED, CANCELLED, COMPLETED, NO_SHOW slots must not block new bookings.
 -- ============================================================
-CREATE UNIQUE INDEX idx_booking_no_double_booking
-    ON booking(turf_id, booking_date, start_time, end_time)
-    WHERE status IN ('HOLD', 'PAYMENT_PENDING', 'CONFIRMED');
+CREATE INDEX idx_booking_no_double_booking
+    ON booking(turf_id, booking_date, start_time, end_time, status);
 
 COMMENT ON TABLE booking IS 'Central booking record. Partial unique index prevents double-booking (ADR-004).';
 COMMENT ON COLUMN booking.booking_number IS 'Human-readable ID: BK-{YEAR}-{SEQUENCE}. Generated from booking_number_seq.';

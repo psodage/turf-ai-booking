@@ -22,8 +22,7 @@ CREATE TABLE conversation_message (
 CREATE INDEX idx_conversation_message_conv ON conversation_message(conversation_id);
 
 -- Deduplication index for WhatsApp webhook messages (ADR-015)
-CREATE UNIQUE INDEX idx_conversation_message_wamid ON conversation_message(whatsapp_message_id)
-    WHERE whatsapp_message_id IS NOT NULL;
+CREATE UNIQUE INDEX idx_conversation_message_wamid ON conversation_message(whatsapp_message_id);
 
 COMMENT ON TABLE conversation_message IS 'Individual messages exchanged in a conversation.';
 COMMENT ON COLUMN conversation_message.whatsapp_message_id IS 'Meta wamid for message deduplication (ADR-015).';

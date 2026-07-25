@@ -21,6 +21,8 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
+import jakarta.persistence.UniqueConstraint;
+
 /**
  * Central Booking entity.
  *
@@ -28,7 +30,9 @@ import java.time.LocalTime;
  * A partial unique index on the table enforces no double-booking at the DB layer.
  */
 @Entity
-@Table(name = "booking")
+@Table(name = "booking", uniqueConstraints = {
+    @UniqueConstraint(name = "idx_booking_no_double_booking", columnNames = {"turf_id", "booking_date", "start_time", "end_time"})
+})
 @Getter
 @Setter
 @NoArgsConstructor

@@ -26,6 +26,6 @@ CREATE TABLE notification (
 );
 
 CREATE INDEX idx_notification_user ON notification(user_id);
-CREATE INDEX idx_notification_status ON notification(status) WHERE status = 'PENDING';
+CREATE INDEX idx_notification_status ON notification(status);
 
 COMMENT ON TABLE notification IS 'Outbound notification records (WhatsApp templates — ADR-017).';

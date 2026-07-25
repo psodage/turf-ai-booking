@@ -124,8 +124,6 @@ class WhatsAppWebhookProcessorTest {
     @Test
     @DisplayName("HMAC-SHA256 signature validator calculation check")
     void testHmacSha256Calculation() {
-        when(whatsappProperties.getAppSecret()).thenReturn("test_secret");
-
         String payload = "{\"test\":\"data\"}";
         String signature = signatureValidator.calculateHmacSha256(payload, "test_secret");
 

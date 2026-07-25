@@ -63,37 +63,37 @@ class BookingServiceTest {
         bookingService = new BookingService(turfService, operatingHoursService, pricingService, slotService, bookingRepository, bookingHoldRepository, bookingAuditRepository, userRepository);
 
         testBusiness = Business.builder()
-                .id(UUID.randomUUID())
                 .name("Green Pitch")
                 .whatsappPhoneNumberId("PN_123")
                 .timezone("Asia/Kolkata")
                 .status(BusinessStatus.ACTIVE)
                 .build();
+        testBusiness.setId(UUID.randomUUID());
 
         testTurf = Turf.builder()
-                .id(UUID.randomUUID())
                 .business(testBusiness)
                 .name("Main Turf")
                 .type(TurfType.FIVE_A_SIDE)
                 .status(TurfStatus.ACTIVE)
                 .build();
+        testTurf.setId(UUID.randomUUID());
 
         testCustomer = User.builder()
-                .id(UUID.randomUUID())
                 .name("Amit Kumar")
                 .phone("+919876543210")
                 .role(UserRole.CUSTOMER)
                 .status(UserStatus.ACTIVE)
                 .build();
+        testCustomer.setId(UUID.randomUUID());
 
         testOwner = User.builder()
-                .id(UUID.randomUUID())
                 .name("Rajesh Owner")
                 .phone("+919876543211")
                 .role(UserRole.OWNER)
                 .business(testBusiness)
                 .status(UserStatus.ACTIVE)
                 .build();
+        testOwner.setId(UUID.randomUUID());
 
         bookingId = UUID.randomUUID();
     }
@@ -115,6 +115,7 @@ class BookingServiceTest {
                 .price(new BigDecimal("1000.00"))
                 .status(BookingStatus.CONFIRMED)
                 .build();
+        booking.setId(bookingId);
 
         when(bookingRepository.findById(bookingId)).thenReturn(Optional.of(booking));
         when(userRepository.findById(testCustomer.getId())).thenReturn(Optional.of(testCustomer));
@@ -149,6 +150,7 @@ class BookingServiceTest {
                 .price(new BigDecimal("1000.00"))
                 .status(BookingStatus.CONFIRMED)
                 .build();
+        booking.setId(bookingId);
 
         when(bookingRepository.findById(bookingId)).thenReturn(Optional.of(booking));
         when(userRepository.findById(testCustomer.getId())).thenReturn(Optional.of(testCustomer));
@@ -181,6 +183,7 @@ class BookingServiceTest {
                 .price(new BigDecimal("1000.00"))
                 .status(BookingStatus.CONFIRMED)
                 .build();
+        booking.setId(bookingId);
 
         when(bookingRepository.findById(bookingId)).thenReturn(Optional.of(booking));
         when(userRepository.findById(testOwner.getId())).thenReturn(Optional.of(testOwner));

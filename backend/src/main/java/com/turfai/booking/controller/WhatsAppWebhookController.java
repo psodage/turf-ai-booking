@@ -39,6 +39,7 @@ public class WhatsAppWebhookController {
             @RequestParam(name = "hub.verify_token", required = false) String verifyToken,
             @RequestParam(name = "hub.challenge", required = false) String challenge) {
 
+        // Log only non-sensitive metadata (hub.verify_token must never be logged)
         log.info("Received WhatsApp webhook GET verification request. mode={}", mode);
 
         if ("subscribe".equals(mode) && whatsappProperties.getVerifyToken().equals(verifyToken)) {

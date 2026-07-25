@@ -71,17 +71,17 @@ class BookingConcurrencyTest {
                 .status(TurfStatus.ACTIVE)
                 .build());
 
-        long timestampSuffix = System.currentTimeMillis() % 100000000L;
+        long timestampSuffix = Math.abs(System.currentTimeMillis()) % 100000000L;
         testCustomer1 = userRepository.save(User.builder()
                 .name("Customer One")
-                .phone("+9191" + timestampSuffix)
+                .phone(String.format("+9191%08d", timestampSuffix))
                 .role(UserRole.CUSTOMER)
                 .status(UserStatus.ACTIVE)
                 .build());
 
         testCustomer2 = userRepository.save(User.builder()
                 .name("Customer Two")
-                .phone("+9192" + timestampSuffix)
+                .phone(String.format("+9192%08d", timestampSuffix))
                 .role(UserRole.CUSTOMER)
                 .status(UserStatus.ACTIVE)
                 .build());
@@ -149,6 +149,7 @@ class BookingConcurrencyTest {
 
         List<Future<Boolean>> futures = executor.invokeAll(tasks);
         executor.shutdown();
+        executor.awaitTermination(5, java.util.concurrent.TimeUnit.SECONDS);
 
         int successCount = 0;
         int failureCount = 0;

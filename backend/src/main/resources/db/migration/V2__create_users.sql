@@ -30,8 +30,7 @@ CREATE TABLE users (
 CREATE UNIQUE INDEX idx_users_phone ON users(phone);
 
 -- Filter business staff by role
-CREATE INDEX idx_users_business_role ON users(business_id, role)
-    WHERE business_id IS NOT NULL;
+CREATE INDEX idx_users_business_role ON users(business_id, role);
 
 COMMENT ON TABLE users IS 'Customers, owners, managers, and admins. Customers have NULL business_id (ADR-002).';
 COMMENT ON COLUMN users.business_id IS 'NULL for CUSTOMER and ADMIN roles. Required for OWNER and MANAGER (ADR-002).';

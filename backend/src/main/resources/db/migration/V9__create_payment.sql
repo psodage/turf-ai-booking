@@ -33,8 +33,7 @@ CREATE TABLE payment (
 CREATE INDEX idx_payment_booking ON payment(booking_id);
 
 -- Deduplication: Razorpay sends the same payment_id in retried webhooks
-CREATE UNIQUE INDEX idx_payment_gateway_payment_id ON payment(gateway_payment_id)
-    WHERE gateway_payment_id IS NOT NULL;
+CREATE UNIQUE INDEX idx_payment_gateway_payment_id ON payment(gateway_payment_id);
 
 -- Dashboard/reporting queries
 CREATE INDEX idx_payment_status ON payment(status);
