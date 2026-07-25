@@ -63,6 +63,7 @@ class BookingServiceTest {
         bookingService = new BookingService(turfService, operatingHoursService, pricingService, slotService, bookingRepository, bookingHoldRepository, bookingAuditRepository, userRepository);
 
         testBusiness = Business.builder()
+                .id(UUID.randomUUID())
                 .name("Green Pitch")
                 .whatsappPhoneNumberId("PN_123")
                 .timezone("Asia/Kolkata")
@@ -70,6 +71,7 @@ class BookingServiceTest {
                 .build();
 
         testTurf = Turf.builder()
+                .id(UUID.randomUUID())
                 .business(testBusiness)
                 .name("Main Turf")
                 .type(TurfType.FIVE_A_SIDE)
@@ -77,6 +79,7 @@ class BookingServiceTest {
                 .build();
 
         testCustomer = User.builder()
+                .id(UUID.randomUUID())
                 .name("Amit Kumar")
                 .phone("+919876543210")
                 .role(UserRole.CUSTOMER)
@@ -84,6 +87,7 @@ class BookingServiceTest {
                 .build();
 
         testOwner = User.builder()
+                .id(UUID.randomUUID())
                 .name("Rajesh Owner")
                 .phone("+919876543211")
                 .role(UserRole.OWNER)

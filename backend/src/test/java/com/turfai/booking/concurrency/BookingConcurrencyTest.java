@@ -71,16 +71,17 @@ class BookingConcurrencyTest {
                 .status(TurfStatus.ACTIVE)
                 .build());
 
+        long timestampSuffix = System.currentTimeMillis() % 100000000L;
         testCustomer1 = userRepository.save(User.builder()
                 .name("Customer One")
-                .phone("+919000000001_" + System.currentTimeMillis())
+                .phone("+9191" + timestampSuffix)
                 .role(UserRole.CUSTOMER)
                 .status(UserStatus.ACTIVE)
                 .build());
 
         testCustomer2 = userRepository.save(User.builder()
                 .name("Customer Two")
-                .phone("+919000000002_" + System.currentTimeMillis())
+                .phone("+9192" + timestampSuffix)
                 .role(UserRole.CUSTOMER)
                 .status(UserStatus.ACTIVE)
                 .build());

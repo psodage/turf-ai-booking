@@ -39,7 +39,7 @@ public class WhatsAppWebhookController {
             @RequestParam(name = "hub.verify_token", required = false) String verifyToken,
             @RequestParam(name = "hub.challenge", required = false) String challenge) {
 
-        log.info("Received WhatsApp webhook GET verification request. mode={}, token={}", mode, verifyToken);
+        log.info("Received WhatsApp webhook GET verification request. mode={}", mode);
 
         if ("subscribe".equals(mode) && whatsappProperties.getVerifyToken().equals(verifyToken)) {
             log.info("WhatsApp webhook GET verification succeeded!");

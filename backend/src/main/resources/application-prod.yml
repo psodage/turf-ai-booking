@@ -1,6 +1,6 @@
-# ============================================================
-# Production Profile Configuration
-# ============================================================
+# ==============================================================================
+# Turf AI Booking — Production Spring Environment Profile (prod)
+# ==============================================================================
 
 spring:
   config:
@@ -8,22 +8,63 @@ spring:
       on-profile: prod
 
   datasource:
-    url: ${DATABASE_URL}
-    username: ${DATABASE_USERNAME}
-    password: ${DATABASE_PASSWORD}
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 5
+      idle-timeout: 300000
+      connection-timeout: 20000
+      max-lifetime: 1200000
+      pool-name: TurfAiHikariProdPool
 
   jpa:
+    hibernate:
+      ddl-auto: validate
     show-sql: false
+    properties:
+      hibernate:
+        format_sql: false
 
   flyway:
-    clean-disabled: true
+    enabled: true
+    locations: classpath:db/migration
 
+# Spring Boot Actuator Management
 management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info, metrics, prometheus
   endpoint:
     health:
-      show-details: never
+      show-details: when_authorized
+      probes:
+        enabled: true
 
-logging:
-  level:
-    root: WARN
-    com.turfai.booking: INFO
+# Disable Swagger in Production
+springdoc:
+  api-docs:
+    enabled: false
+  swagger-ui:
+    enabled: false
+
+# Production External Services
+whatsapp:
+  phone-number-id: ${WHATSAPP_PHONE_NUMBER_ID}
+  access-token: ${WHATSAPP_ACCESS_TOKEN}
+  verify-token: ${WHATSAPP_VERIFY_TOKEN}
+  app-secret: ${WHATSAPP_APP_SECRET}
+
+razorpay:
+  mode: ${RAZORPAY_MODE:live}
+  key-id: ${RAZORPAY_KEY_ID}
+  key-secret: ${RAZORPAY_KEY_SECRET}
+  webhook-secret: ${RAZORPAY_WEBHOOK_SECRET}
+
+ai:
+  provider: ${AI_PROVIDER:openai}
+  api-key: ${AI_API_KEY}
+  model: ${AI_MODEL:gpt-4o-mini}

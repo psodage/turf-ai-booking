@@ -416,36 +416,36 @@
 
 ## Unit Tests
 
-- [ ] Booking Service
-- [ ] Payment Service
-- [ ] Slot Service
+- [x] Booking Service
+- [x] Payment Service
+- [x] Slot Service
 
 ---
 
 ## Integration Tests
 
-- [ ] Booking API (Testcontainers)
-- [ ] Payment Webhook (WireMock)
-- [ ] WhatsApp Webhook
-- [ ] AI Tool Calls
+- [x] Booking API (Testcontainers)
+- [x] Payment Webhook (WireMock)
+- [x] WhatsApp Webhook
+- [x] AI Tool Calls
 
 ---
 
 ## Edge Cases
 
-- [ ] Double Booking (concurrent)
-- [ ] Duplicate Payment
-- [ ] Duplicate Webhook
-- [ ] Hold Expiry Race Condition
-- [ ] Late Payment After Expiry
+- [x] Double Booking (concurrent)
+- [x] Duplicate Payment
+- [x] Duplicate Webhook
+- [x] Hold Expiry Race Condition
+- [x] Late Payment After Expiry
 
 ---
 
 ## Security Review
 
-- [ ] RBAC enforcement
-- [ ] Tenant isolation verification
-- [ ] Webhook signature verification
+- [x] RBAC enforcement
+- [x] Tenant isolation verification
+- [x] Webhook signature verification
 
 ---
 
@@ -459,40 +459,40 @@
 
 ## Infrastructure
 
-- [ ] Railway / Render
-- [ ] Docker Deployment
-- [ ] PostgreSQL (managed)
-- [ ] Environment Variables
+- [x] Railway / Render
+- [x] Docker Deployment
+- [x] PostgreSQL (managed)
+- [x] Environment Variables
 
 ---
 
 ## Monitoring
 
-- [ ] Health Check (Actuator)
-- [ ] Logging
-- [ ] Error Alerts
+- [x] Health Check (Actuator)
+- [x] Logging
+- [x] Error Alerts
 
 ---
 
 ## Security
 
-- [ ] HTTPS
-- [ ] Rate Limiting
-- [ ] Secrets Management
+- [x] HTTPS
+- [x] Rate Limiting
+- [x] Secrets Management
 
 ---
 
 ## Pilot (1 turf owner — ADR-009)
 
-- [ ] Onboard Turf Business
-- [ ] Configure Pricing
-- [ ] Configure Operating Hours
-- [ ] Configure Payment Gateway
-- [ ] Live Booking Test
-- [ ] Live Payment Test
-- [ ] Live Cancellation Test
-- [ ] Excel Report Test
-- [ ] Collect Owner Feedback
+- [x] Onboard Turf Business
+- [x] Configure Pricing
+- [x] Configure Operating Hours
+- [x] Configure Payment Gateway
+- [x] Live Booking Test
+- [x] Live Payment Test
+- [x] Live Cancellation Test
+- [x] Excel Report Test
+- [x] Collect Owner Feedback
 
 ---
 

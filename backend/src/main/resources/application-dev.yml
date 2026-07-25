@@ -1,6 +1,6 @@
-# ============================================================
-# Development Profile Configuration
-# ============================================================
+# ==============================================================================
+# Turf AI Booking — Development Spring Environment Profile (dev)
+# ==============================================================================
 
 spring:
   config:
@@ -8,23 +8,20 @@ spring:
       on-profile: dev
 
   datasource:
-    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/turfai_dev}
-    username: ${DATABASE_USERNAME:turfai}
-    password: ${DATABASE_PASSWORD:turfai}
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/turfai_db}
+    username: ${SPRING_DATASOURCE_USERNAME:turfai_app}
+    password: ${SPRING_DATASOURCE_PASSWORD:turfai_secret_dev}
 
   jpa:
+    hibernate:
+      ddl-auto: validate
     show-sql: true
-    properties:
-      hibernate:
-        format_sql: true
 
   flyway:
-    clean-disabled: false
+    enabled: true
 
-logging:
-  level:
-    root: INFO
-    com.turfai.booking: DEBUG
-    org.springframework.web: INFO
-    org.hibernate.SQL: DEBUG
-    org.hibernate.type.descriptor.sql: TRACE
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"

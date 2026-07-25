@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: turfai-postgres-dev
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: turfai_db
+      POSTGRES_USER: turfai_app
+      POSTGRES_PASSWORD: turfai_secret_dev
+    volumes:
+      - postgres_dev_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_dev_data:
