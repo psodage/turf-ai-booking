@@ -6,11 +6,11 @@
 
 ## Current Phase
 
-➡️ Phase 7 — Excel & Dashboard Reporting
+➡️ Phase 8 — Testing, Hardening & Final Documentation
 
 ## Status
 
-Phase 5 AI Agent & Orchestration and Phase 6 Payment Gateway Integration complete. AI provider interface, prompt management, 10-message sliding window memory, 11 structured tools returning standardized ToolResult JSON, Razorpay Payment Links integration, POST /webhook/razorpay callback processor, HMAC-SHA256 signature verification, late-payment 60s grace period handling (ADR-016), and refund engine implemented and verified with unit & integration tests.
+Phase 7 Excel Reporting & Business Reports complete. Apache POI dependency added (`poi-ooxml 5.3.0`), 6-sheet Excel report generator (`Business Summary`, `Bookings`, `Payments`, `Customers`, `Revenue`, `Slot Utilization`), Excel formula injection protection, local file system storage, report metadata tracking, `@Scheduled` cron jobs (daily nightly, weekly Monday morning, monthly 1st of month), REST `ReportController` endpoints, AI `generateExcelReport` tool, and WhatsApp document delivery integration implemented and verified with 33 passing unit & integration tests.
 
 ## Completed
 
@@ -59,10 +59,13 @@ Phase 5 AI Agent & Orchestration and Phase 6 Payment Gateway Integration complet
 - [x] Phase 6 Payment Service & Webhook: POST /webhook/razorpay callback receiver with HMAC-SHA256 signature verification
 - [x] Phase 6 Webhook Idempotency & Confirmation: Duplicate event suppression via PaymentAudit, ADR-016 grace period booking confirmation hook, auto-refund engine
 - [x] Phase 6 REST APIs & Audit: PaymentController (/api/v1/payments/link, status lookup, refund) & PaymentAudit logging
+- [x] Phase 7 Excel Generator: ExcelGeneratorService with 6 sheets, Apache POI styling, formula injection protection (`'=SUM`), and currency formatting
+- [x] Phase 7 Report Storage & Scheduler: ReportStorageService (filesystem + metadata DB) & ReportSchedulerService (@Scheduled cron jobs)
+- [x] Phase 7 Report APIs & AI Tool: ReportController (/api/v1/reports) & AiToolGateway generateExcelReport tool with WhatsApp document delivery
 
 ## Next
 
-➡️ Phase 7 — Excel & Dashboard Reporting (Apache POI Excel report generation, revenue/booking statistics, scheduled email/WhatsApp reports)
+➡️ Phase 8 — Testing, Hardening & Final Documentation
 
 ## Blockers
 
@@ -70,8 +73,8 @@ None.
 
 ## Notes
 
-- All 19 ADRs and ERD specifications fully reflected in AI and payment integration layers.
-- All 28 unit and integration tests pass cleanly.
+- All 19 ADRs and ERD specifications fully reflected in reporting, payment, AI, and booking layers.
+- All 33 unit and integration tests pass cleanly.
 
 ---
 

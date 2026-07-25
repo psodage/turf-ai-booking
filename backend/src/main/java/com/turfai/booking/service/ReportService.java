@@ -89,15 +89,18 @@ public class ReportService {
             }
         }
 
+        final LocalDate finalStart = startDate;
+        final LocalDate finalEnd = endDate;
+
         log.info("Generating {} report for business {} ({}) from {} to {}",
-                request.getReportType(), business.getName(), business.getId(), startDate, endDate);
+                request.getReportType(), business.getName(), business.getId(), finalStart, finalEnd);
 
         // Fetch bookings & payments in date range
-        List<Booking> bookings = bookingRepository.findByBusinessIdAndBookingDateBetween(business.getId(), startDate, endDate);
+        List<Booking> bookings = bookingRepository.findByBusinessIdAndBookingDateBetween(business.getId(), finalStart, finalEnd);
         List<Payment> payments = paymentRepository.findByBusinessId(business.getId()).stream()
                 .filter(p -> {
                     LocalDate pDate = p.getCreatedAt().atZone(java.time.ZoneId.systemDefault()).toLocalDate();
-                    return !pDate.isBefore(startDate) && !pDate.isAfter(endDate);
+                    return !pDate.isBefore(finalStart) && !pDate.isAfter(finalEnd);
                 })
                 .collect(Collectors.toList());
 
@@ -251,7 +254,8 @@ public class ReportService {
         Map<LocalDate, List<Booking>> dailyMap = bookings.stream().collect(Collectors.groupingBy(Booking::getBookingDate));
         List<ReportData.DailyRevenueDto> dailyRevenues = new ArrayList<>();
         for (LocalDate d = startDate; !d.isAfter(endDate); d = d.plusDays(1)) {
-            List<Booking> dayBookings = dailyMap.getOrDefault(d, List.of());
+            final LocalDate currentDay = d;
+            List<Booking> dayBookings = dailyMap.getOrDefault(currentDay, List.of());
             long dayConfirmed = dayBookings.stream().filter(b -> b.getStatus() == BookingStatus.CONFIRMED || b.getStatus() == BookingStatus.COMPLETED).count();
             BigDecimal dayRev = dayBookings.stream()
                     .filter(b -> b.getStatus() == BookingStatus.CONFIRMED || b.getStatus() == BookingStatus.COMPLETED)
@@ -260,7 +264,7 @@ public class ReportService {
                     .reduce(BigDecimal.ZERO, BigDecimal::add);
 
             BigDecimal dayRef = payments.stream()
-                    .filter(p -> p.getRefundStatus() == RefundStatus.SUCCESS && p.getCreatedAt().atZone(java.time.ZoneId.systemDefault()).toLocalDate().equals(d))
+                    .filter(p -> p.getRefundStatus() == RefundStatus.SUCCESS && p.getCreatedAt().atZone(java.time.ZoneId.systemDefault()).toLocalDate().equals(currentDay))
                     .map(Payment::getAmount)
                     .filter(Objects::nonNull)
                     .reduce(BigDecimal.ZERO, BigDecimal::add);
