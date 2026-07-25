@@ -10,7 +10,7 @@
 - [x] Phase 0 - Documentation & Architecture
 - [x] Phase 1 - Project Setup
 - [ ] Phase 2 - Database
-- [ ] Phase 3 - Booking Engine
+- [x] Phase 3 - Booking Engine
 - [ ] Phase 4 - WhatsApp Integration
 - [ ] Phase 5 - AI Agent
 - [ ] Phase 6 - Payment Gateway
@@ -168,60 +168,60 @@
 
 ## Availability
 
-- [ ] Slot Generator (from operating hours)
-- [ ] Slot Validator
-- [ ] Availability Checker
-- [ ] Alternative Slot Suggestion
+- [x] Slot Generator (from operating hours)
+- [x] Slot Validator
+- [x] Availability Checker
+- [x] Alternative Slot Suggestion
 
 ---
 
 ## Booking
 
-- [ ] Create Booking (status = HOLD)
-- [ ] Create Booking Hold (simplified — ADR-014)
-- [ ] Booking number generation (PostgreSQL SEQUENCE)
-- [ ] Confirm Booking (on payment success)
-- [ ] Cancel Booking (with cancellation window check)
-- [ ] Payment webhook grace period logic (ADR-016)
+- [x] Create Booking (status = HOLD)
+- [x] Create Booking Hold (simplified — ADR-014)
+- [x] Booking number generation (PostgreSQL SEQUENCE)
+- [x] Confirm Booking (on payment success)
+- [x] Cancel Booking (with cancellation window check)
+- [x] Payment webhook grace period logic (ADR-016)
 
 ---
 
 ## Conflict Prevention
 
-- [ ] Pessimistic Locking (SELECT FOR UPDATE)
-- [ ] Duplicate Prevention
-- [ ] Transaction Management
+- [x] Pessimistic Locking (SELECT FOR UPDATE)
+- [x] Duplicate Prevention
+- [x] Transaction Management
 
 ---
 
 ## Hold Expiry (ADR-005)
 
-- [ ] Lazy expiry in queries (expires_at > NOW())
-- [ ] Scheduled cleanup task (@Scheduled, every 2 min)
+- [x] Lazy expiry in queries (expires_at > NOW())
+- [x] Scheduled cleanup task (@Scheduled, every 2 min)
 
 ---
 
 ## Concurrency (ADR-018)
 
-- [ ] Conversation lock (SELECT FOR UPDATE on conversation row)
-- [ ] Message deduplication (whatsapp_message_id)
+- [x] Conversation lock (SELECT FOR UPDATE on conversation row)
+- [x] Message deduplication (whatsapp_message_id)
 
 ---
 
 ## Timezone (ADR-019)
 
-- [ ] Business timezone field
-- [ ] Timezone-aware slot generation
-- [ ] Timezone-aware cancellation window check
+- [x] Business timezone field
+- [x] Timezone-aware slot generation
+- [x] Timezone-aware cancellation window check
 
 ---
 
 ## Business Rules
 
-- [ ] Booking Window (30 days advance)
-- [ ] Cancellation Window (2 hours)
-- [ ] Turf Operating Hours
-- [ ] Pricing Resolution (PEAK → WEEKEND → BASE)
+- [x] Booking Window (30 days advance)
+- [x] Cancellation Window (2 hours)
+- [x] Turf Operating Hours
+- [x] Pricing Resolution (PEAK → WEEKEND → BASE)
 
 ---
 

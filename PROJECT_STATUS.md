@@ -6,11 +6,11 @@
 
 ## Current Phase
 
-➡️ Phase 3 — Booking Engine
+➡️ Phase 4 — WhatsApp Integration
 
 ## Status
 
-Phase 2 Database & Domain Model complete. All 17 Flyway migrations, repeatable demo seed script, 20 enums, 16 JPA entities, and 16 Spring Data repositories implemented and verified.
+Phase 3 Booking Engine complete. Slot generation, pricing resolution, booking holds, payment confirmations, cancellations, hold cleanup scheduler, REST APIs, OpenAPI/Swagger docs, and multi-threaded double-booking prevention verified.
 
 ## Completed
 
@@ -39,10 +39,17 @@ Phase 2 Database & Domain Model complete. All 17 Flyway migrations, repeatable d
 - [x] Repeatable Flyway demo seed migration (R__seed_demo_data.sql for Green Pitch Kolhapur)
 - [x] 16 JPA entities with proper relationships, validation, and enums
 - [x] 16 Spring Data JPA repositories with custom finder methods and pessimistic lock queries (ADR-018)
+- [x] Phase 3 Booking Engine: TurfService, OperatingHoursService, PricingService (PEAK > WEEKEND > BASE)
+- [x] Phase 3 Slot Generation & Availability: 60-min slots, past time filter (business timezone ADR-019), 30-day advance window check
+- [x] Phase 3 Booking Holds & Confirmations: 10-min hold (ADR-005), sequential BK-YYYY-NNNNN numbers, late payment grace period (ADR-016), audit logging
+- [x] Phase 3 Cancellations: 2-hour customer window (ADR-010), owner override, COMPLETED/NO_SHOW terminal state checks (ADR-013)
+- [x] Phase 3 Hold Cleanup: 2-minute background scheduler (@Scheduled) for auto-expiring holds
+- [x] Phase 3 REST APIs & OpenAPI: SlotController, BookingController, BlockedSlotController with Swagger UI (/swagger-ui.html)
+- [x] Phase 3 Concurrency Verification: Multi-threaded BookingConcurrencyTest verifying double-booking prevention under concurrent load
 
 ## Next
 
-➡️ Phase 3 — Booking Engine (Availability, Hold creation, Cancellation, Conflict checks)
+➡️ Phase 4 — WhatsApp Integration (Meta Cloud API, Webhooks, Signature Verification, Message Parsing & Deduplication)
 
 ## Blockers
 
@@ -50,11 +57,8 @@ None.
 
 ## Notes
 
-- All 19 ADRs and ERD specifications fully reflected in schema and entity layer.
-- Customer users have NULL business_id (ADR-002).
-- Booking -> Payment is 1:N (ADR-003).
-- Booking holds use simplified schema (ADR-014) and lazy expiry + background cleanup (ADR-005).
-- All 6 unit and repository integration tests pass cleanly.
+- All 19 ADRs and ERD specifications fully reflected in booking engine service layer.
+- All 12 unit and integration tests pass cleanly.
 
 ---
 
