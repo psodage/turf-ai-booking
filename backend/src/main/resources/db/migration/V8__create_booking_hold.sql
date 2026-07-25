@@ -6,7 +6,7 @@
 -- ============================================================
 
 CREATE TABLE booking_hold (
-    id         UUID        NOT NULL DEFAULT random_uuid(),
+    id         UUID        NOT NULL DEFAULT ${uuid_gen_func},
     booking_id UUID        NOT NULL,
     expires_at TIMESTAMP WITH TIME ZONE NOT NULL,
     status     VARCHAR(20) NOT NULL DEFAULT 'ACTIVE',

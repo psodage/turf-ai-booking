@@ -4,7 +4,7 @@
 -- ============================================================
 
 CREATE TABLE payment_audit (
-    id              UUID        NOT NULL DEFAULT random_uuid(),
+    id              UUID        NOT NULL DEFAULT ${uuid_gen_func},
     payment_id      UUID        NOT NULL,
     event           VARCHAR(100) NOT NULL,
     gateway_payload JSON,

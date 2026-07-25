@@ -5,7 +5,7 @@
 -- ============================================================
 
 CREATE TABLE blocked_slot (
-    id         UUID        NOT NULL DEFAULT random_uuid(),
+    id         UUID        NOT NULL DEFAULT ${uuid_gen_func},
     turf_id    UUID        NOT NULL,
     date       DATE        NOT NULL,
     start_time TIME        NOT NULL,

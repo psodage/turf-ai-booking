@@ -5,7 +5,7 @@
 -- ============================================================
 
 CREATE TABLE users (
-    id          UUID         NOT NULL DEFAULT random_uuid(),
+    id          UUID         NOT NULL DEFAULT ${uuid_gen_func},
     business_id UUID,
     name        VARCHAR(255) NOT NULL,
     phone       VARCHAR(20)  NOT NULL,

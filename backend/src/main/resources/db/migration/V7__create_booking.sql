@@ -6,7 +6,7 @@
 -- ============================================================
 
 CREATE TABLE booking (
-    id             UUID           NOT NULL DEFAULT random_uuid(),
+    id             UUID           NOT NULL DEFAULT ${uuid_gen_func},
     booking_number VARCHAR(30)    NOT NULL,
     business_id    UUID           NOT NULL,
     turf_id        UUID           NOT NULL,

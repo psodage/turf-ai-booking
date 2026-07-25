@@ -5,7 +5,7 @@
 -- ============================================================
 
 CREATE TABLE pricing_rule (
-    id           UUID           NOT NULL DEFAULT random_uuid(),
+    id           UUID           NOT NULL DEFAULT ${uuid_gen_func},
     turf_id      UUID           NOT NULL,
     pricing_type VARCHAR(20)    NOT NULL,
     day_of_week  INT,

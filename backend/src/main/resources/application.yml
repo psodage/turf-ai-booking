@@ -48,6 +48,7 @@ spring:
     out-of-order: false
     validate-on-migrate: true
     placeholders:
+      uuid_gen_func: "gen_random_uuid()"
       booking_unique_index_def: "ON booking(turf_id, booking_date, start_time, end_time) WHERE status IN ('HOLD', 'PAYMENT_PENDING', 'CONFIRMED')"
 
   # ---- Jackson ----

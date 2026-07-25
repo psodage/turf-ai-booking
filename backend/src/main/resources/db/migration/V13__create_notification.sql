@@ -5,7 +5,7 @@
 -- ============================================================
 
 CREATE TABLE notification (
-    id          UUID        NOT NULL DEFAULT random_uuid(),
+    id          UUID        NOT NULL DEFAULT ${uuid_gen_func},
     user_id     UUID        NOT NULL,
     booking_id  UUID,
     business_id UUID        NOT NULL,

@@ -5,7 +5,7 @@
 -- ============================================================
 
 CREATE TABLE turf (
-    id          UUID         NOT NULL DEFAULT random_uuid(),
+    id          UUID         NOT NULL DEFAULT ${uuid_gen_func},
     business_id UUID         NOT NULL,
     name        VARCHAR(255) NOT NULL,
     type        VARCHAR(30)  NOT NULL,

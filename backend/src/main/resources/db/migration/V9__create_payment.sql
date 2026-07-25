@@ -5,7 +5,7 @@
 -- ============================================================
 
 CREATE TABLE payment (
-    id                 UUID           NOT NULL DEFAULT random_uuid(),
+    id                 UUID           NOT NULL DEFAULT ${uuid_gen_func},
     booking_id         UUID           NOT NULL,
     business_id        UUID           NOT NULL,
     customer_id        UUID           NOT NULL,

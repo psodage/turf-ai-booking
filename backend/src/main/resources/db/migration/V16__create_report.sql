@@ -5,7 +5,7 @@
 -- ============================================================
 
 CREATE TABLE report (
-    id           UUID        NOT NULL DEFAULT random_uuid(),
+    id           UUID        NOT NULL DEFAULT ${uuid_gen_func},
     business_id  UUID        NOT NULL,
     report_type  VARCHAR(20) NOT NULL,
     file_path    TEXT        NOT NULL,

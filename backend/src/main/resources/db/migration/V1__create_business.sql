@@ -5,7 +5,7 @@
 -- ============================================================
 
 CREATE TABLE business (
-    id                         UUID        NOT NULL DEFAULT random_uuid(),
+    id                         UUID        NOT NULL DEFAULT ${uuid_gen_func},
     name                       VARCHAR(255) NOT NULL,
     address                    TEXT,
     city                       VARCHAR(100),

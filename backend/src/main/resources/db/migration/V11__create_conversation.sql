@@ -6,7 +6,7 @@
 -- ============================================================
 
 CREATE TABLE conversation (
-    id             UUID        NOT NULL DEFAULT random_uuid(),
+    id             UUID        NOT NULL DEFAULT ${uuid_gen_func},
     user_id        UUID        NOT NULL,
     business_id    UUID        NOT NULL,
     role           VARCHAR(20) NOT NULL,

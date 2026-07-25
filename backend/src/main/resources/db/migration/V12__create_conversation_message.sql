@@ -5,7 +5,7 @@
 -- ============================================================
 
 CREATE TABLE conversation_message (
-    id                  UUID        NOT NULL DEFAULT random_uuid(),
+    id                  UUID        NOT NULL DEFAULT ${uuid_gen_func},
     conversation_id     UUID        NOT NULL,
     sender              VARCHAR(10) NOT NULL,
     message             TEXT        NOT NULL,

@@ -4,7 +4,7 @@
 -- ============================================================
 
 CREATE TABLE booking_audit (
-    id         UUID        NOT NULL DEFAULT random_uuid(),
+    id         UUID        NOT NULL DEFAULT ${uuid_gen_func},
     booking_id UUID        NOT NULL,
     old_status VARCHAR(20),
     new_status VARCHAR(20) NOT NULL,
