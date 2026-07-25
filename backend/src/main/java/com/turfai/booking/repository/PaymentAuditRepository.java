@@ -11,4 +11,6 @@ import java.util.UUID;
 public interface PaymentAuditRepository extends JpaRepository<PaymentAudit, UUID> {
 
     List<PaymentAudit> findByPaymentIdOrderByCreatedAtAsc(UUID paymentId);
+
+    boolean existsByPaymentIdAndEvent(UUID paymentId, String event);
 }

@@ -54,7 +54,7 @@ class WhatsAppWebhookProcessorTest {
 
     @BeforeEach
     void setUp() {
-        whatsAppWebhookProcessor = new WhatsAppWebhookProcessor(businessRepository, customerRegistrationService, conversationService);
+        whatsAppWebhookProcessor = new WhatsAppWebhookProcessor(businessRepository, customerRegistrationService, conversationService, null);
         signatureValidator = new WhatsAppSignatureValidator(whatsappProperties);
 
         testBusiness = Business.builder()

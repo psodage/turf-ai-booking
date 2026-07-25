@@ -96,6 +96,24 @@ whatsapp:
   verify-token: ${WHATSAPP_VERIFY_TOKEN:turfai_verify_token_dev}
   app-secret: ${WHATSAPP_APP_SECRET:turfai_app_secret_dev}
 
+# ---- AI Engine Configuration ----
+ai:
+  provider: ${AI_PROVIDER:mock}
+  api-key: ${AI_API_KEY:demo_ai_api_key}
+  model: ${AI_MODEL:gpt-4o-mini}
+  api-url: ${AI_API_URL:https://api.openai.com/v1/chat/completions}
+  max-tokens: 2000
+  max-context-messages: 10
+  session-timeout-minutes: 30
+  max-turns-per-session: 20
+
+# ---- Razorpay Payment Gateway ----
+razorpay:
+  mode: ${RAZORPAY_MODE:mock}
+  key-id: ${RAZORPAY_KEY_ID:rzp_test_demo_key_id}
+  key-secret: ${RAZORPAY_KEY_SECRET:rzp_test_demo_key_secret}
+  webhook-secret: ${RAZORPAY_WEBHOOK_SECRET:turfai_rzp_webhook_secret_dev}
+
 # ---- Logging ----
 logging:
   level:

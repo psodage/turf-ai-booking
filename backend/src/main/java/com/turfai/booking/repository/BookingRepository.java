@@ -32,4 +32,9 @@ public interface BookingRepository extends JpaRepository<Booking, UUID> {
      * Business bookings for dashboard/owner view on a specific date.
      */
     List<Booking> findByBusinessIdAndBookingDate(UUID businessId, LocalDate bookingDate);
+
+    /**
+     * Business bookings for report generation within date range.
+     */
+    List<Booking> findByBusinessIdAndBookingDateBetween(UUID businessId, LocalDate startDate, LocalDate endDate);
 }

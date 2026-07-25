@@ -6,11 +6,11 @@
 
 ## Current Phase
 
-➡️ Phase 5 — AI Agent
+➡️ Phase 7 — Excel & Dashboard Reporting
 
 ## Status
 
-Phase 4 WhatsApp Integration complete. Meta Cloud API configuration, GET webhook verification handshake, POST event receiver, HMAC-SHA256 signature verification, 5-minute replay protection (ADR-015), business routing by phone_number_id (ADR-006), customer auto-registration (ADR-002), message deduplication, conversation write locking (ADR-018), and outbound messaging (text, interactive buttons, lists, templates, documents) implemented and verified with unit tests.
+Phase 5 AI Agent & Orchestration and Phase 6 Payment Gateway Integration complete. AI provider interface, prompt management, 10-message sliding window memory, 11 structured tools returning standardized ToolResult JSON, Razorpay Payment Links integration, POST /webhook/razorpay callback processor, HMAC-SHA256 signature verification, late-payment 60s grace period handling (ADR-016), and refund engine implemented and verified with unit & integration tests.
 
 ## Completed
 
@@ -51,10 +51,18 @@ Phase 4 WhatsApp Integration complete. Meta Cloud API configuration, GET webhook
 - [x] Phase 4 Routing & Identity: Business routing by phone_number_id (ADR-006), customer auto-registration (ADR-002), wamid deduplication (ADR-015)
 - [x] Phase 4 Session Concurrency: ConversationService with pessimistic write lock (SELECT FOR UPDATE, ADR-018)
 - [x] Phase 4 Outbound Service: WhatsAppService for text, interactive buttons, list options, templates (ADR-017), and documents
+- [x] Phase 5 AI Orchestration: AiProvider interface, MockAiProvider, OpenAiProvider REST client
+- [x] Phase 5 Structured Tools: AiToolGateway with 11 tools returning standardized ToolResult JSON
+- [x] Phase 5 Prompt Management: PromptManager with BaseSystemPrompt, CustomerPrompt, OwnerPrompt, ErrorInstructions
+- [x] Phase 5 Memory & Context: ConversationContextBuilder (10-msg sliding window, 30-min session timeout, 2000 token budget)
+- [x] Phase 6 Payment Gateway: Razorpay Payment Links API integration (RazorpayProperties, RazorpayClientWrapper, MockRazorpayClientWrapper)
+- [x] Phase 6 Payment Service & Webhook: POST /webhook/razorpay callback receiver with HMAC-SHA256 signature verification
+- [x] Phase 6 Webhook Idempotency & Confirmation: Duplicate event suppression via PaymentAudit, ADR-016 grace period booking confirmation hook, auto-refund engine
+- [x] Phase 6 REST APIs & Audit: PaymentController (/api/v1/payments/link, status lookup, refund) & PaymentAudit logging
 
 ## Next
 
-➡️ Phase 5 — AI Agent (Spring AI / LangChain4j, Tool Calling, System Prompts, Intent Routing, Context Builder)
+➡️ Phase 7 — Excel & Dashboard Reporting (Apache POI Excel report generation, revenue/booking statistics, scheduled email/WhatsApp reports)
 
 ## Blockers
 
@@ -62,8 +70,8 @@ None.
 
 ## Notes
 
-- All 19 ADRs and ERD specifications fully reflected in WhatsApp integration layer.
-- All 19 unit and integration tests pass cleanly.
+- All 19 ADRs and ERD specifications fully reflected in AI and payment integration layers.
+- All 28 unit and integration tests pass cleanly.
 
 ---
 

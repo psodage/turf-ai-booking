@@ -17,6 +17,8 @@ import com.turfai.booking.repository.BusinessRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.ObjectProvider;
+import com.turfai.booking.ai.orchestrator.AiOrchestratorService;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
@@ -32,6 +34,7 @@ public class WhatsAppWebhookProcessor {
     private final BusinessRepository businessRepository;
     private final CustomerRegistrationService customerRegistrationService;
     private final ConversationService conversationService;
+    private final ObjectProvider<AiOrchestratorService> aiOrchestratorServiceProvider;
 
     @Transactional
     public void processWebhookPayload(InboundWebhookPayload payload) {
@@ -128,6 +131,15 @@ public class WhatsAppWebhookProcessor {
         // 6. Save Message into Conversation
         conversationService.saveIncomingMessage(conversation, textContent, messageType, wamid);
         log.info("Persisted incoming WhatsApp message from user {} at business {}: [{}]", user.getPhone(), business.getName(), textContent);
+
+        // 7. Route to AI Orchestrator
+        if (aiOrchestratorServiceProvider != null && aiOrchestratorServiceProvider.getIfAvailable() != null) {
+            try {
+                aiOrchestratorServiceProvider.getIfAvailable().processUserMessage(conversation);
+            } catch (Exception ex) {
+                log.error("Error in AI Orchestrator processing message for conversation {}", conversation.getId(), ex);
+            }
+        }
     }
 
     private String extractSenderName(java.util.List<WebhookContact> contacts, String phone) {

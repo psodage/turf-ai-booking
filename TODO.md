@@ -283,55 +283,55 @@
 
 ## AI
 
-- [ ] OpenAI / Gemini Integration
-- [ ] Prompt Management
-- [ ] System Prompt (Customer AI)
-- [ ] System Prompt (Owner AI)
-- [ ] Context Builder
+- [x] OpenAI / Gemini Integration
+- [x] Prompt Management
+- [x] System Prompt (Customer AI)
+- [x] System Prompt (Owner AI)
+- [x] Context Builder
 
 ---
 
 ## Customer Tools (camelCase — ADR-011)
 
-- [ ] checkAvailability
-- [ ] getAvailableTurfs
-- [ ] createBookingHold
-- [ ] createPaymentLink
-- [ ] getMyBookings
-- [ ] cancelBooking
-- [ ] getPricing
-- [ ] getLocation
+- [x] checkAvailability
+- [x] getAvailableTurfs
+- [x] createBookingHold
+- [x] createPaymentLink
+- [x] getMyBookings
+- [x] cancelBooking
+- [x] getPricing
+- [x] getLocation
 
 ---
 
 ## Owner Tools
 
-- [ ] getTodayBookings
-- [ ] getUpcomingBookings
-- [ ] blockSlot
-- [ ] unblockSlot
-- [ ] generateExcelReport
-- [ ] getRevenue
-- [ ] getBookingStatistics
-- [ ] updatePricing
+- [x] getTodayBookings
+- [x] getUpcomingBookings
+- [x] blockSlot
+- [x] unblockSlot
+- [x] generateExcelReport
+- [x] getRevenue
+- [x] getBookingStatistics
+- [x] updatePricing
 
 ---
 
 ## Memory
 
-- [ ] Conversation History (last 10 messages sliding window)
-- [ ] Context Window management
-- [ ] Session Management (30-min timeout)
-- [ ] Token budget per AI call (max 2000 tokens)
-- [ ] Token usage logging
+- [x] Conversation History (last 10 messages sliding window)
+- [x] Context Window management
+- [x] Session Management (30-min timeout)
+- [x] Token budget per AI call (max 2000 tokens)
+- [x] Token usage logging
 
 ---
 
 ## Tool Response Format
 
-- [ ] Standard success/error response structure
-- [ ] Error code mapping (SLOT_UNAVAILABLE, HOLD_EXPIRED, etc.)
-- [ ] AI prompt error handling instructions
+- [x] Standard success/error response structure
+- [x] Error code mapping (SLOT_UNAVAILABLE, HOLD_EXPIRED, etc.)
+- [x] AI prompt error handling instructions
 
 ---
 
@@ -345,29 +345,29 @@
 
 ## Razorpay Payment Links
 
-- [ ] Create Payment Link (not Orders API)
-- [ ] Webhook
-- [ ] Signature Verification
-- [ ] Webhook replay protection — timestamp validation (ADR-015)
+- [x] Create Payment Link (not Orders API)
+- [x] Webhook
+- [x] Signature Verification
+- [x] Webhook replay protection — timestamp validation (ADR-015)
 
 ---
 
 ## Payment Logic
 
-- [ ] Multiple payment attempts per booking (ADR-003)
-- [ ] Success
-- [ ] Failed
-- [ ] Timeout / Expired
-- [ ] Refund
+- [x] Multiple payment attempts per booking (ADR-003)
+- [x] Success
+- [x] Failed
+- [x] Timeout / Expired
+- [x] Refund
 
 ---
 
 ## Booking Confirmation
 
-- [ ] Verify Payment
-- [ ] Check Hold (not expired)
-- [ ] Confirm Booking
-- [ ] Release Hold (convert to CONFIRMED)
+- [x] Verify Payment
+- [x] Check Hold (not expired)
+- [x] Confirm Booking
+- [x] Release Hold (convert to CONFIRMED)
 
 ---
 
@@ -381,26 +381,28 @@
 
 ## Excel
 
-- [ ] Apache POI
-- [ ] Daily Report
-- [ ] Weekly Report
-- [ ] Monthly Report
+- [x] Apache POI
+- [x] Daily Report
+- [x] Weekly Report
+- [x] Monthly Report
 
 ---
 
 ## Owner Reports
 
-- [ ] Revenue Sheet
-- [ ] Booking Sheet
-- [ ] Cancellation Sheet
+- [x] Revenue Sheet
+- [x] Booking Sheet
+- [x] Customer Sheet
+- [x] Payment Sheet
+- [x] Slot Utilization Sheet
 
 ---
 
 ## Delivery
 
-- [ ] WhatsApp Document
-- [ ] Scheduled generation (@Scheduled — ADR-007)
-- [ ] Local filesystem storage (ADR-012)
+- [x] WhatsApp Document
+- [x] Scheduled generation (@Scheduled — ADR-007)
+- [x] Local filesystem storage (ADR-012)
 
 ---
 
