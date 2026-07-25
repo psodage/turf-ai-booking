@@ -5,15 +5,15 @@
 -- ============================================================
 
 CREATE TABLE pricing_rule (
-    id           UUID           NOT NULL DEFAULT gen_random_uuid(),
+    id           UUID           NOT NULL DEFAULT random_uuid(),
     turf_id      UUID           NOT NULL,
     pricing_type VARCHAR(20)    NOT NULL,
     day_of_week  INT,
     start_time   TIME,
     end_time     TIME,
     amount       NUMERIC(10, 2) NOT NULL,
-    created_at   TIMESTAMPTZ    NOT NULL DEFAULT NOW(),
-    updated_at   TIMESTAMPTZ    NOT NULL DEFAULT NOW(),
+    created_at   TIMESTAMP WITH TIME ZONE    NOT NULL DEFAULT NOW(),
+    updated_at   TIMESTAMP WITH TIME ZONE    NOT NULL DEFAULT NOW(),
 
     CONSTRAINT pk_pricing_rule PRIMARY KEY (id),
     CONSTRAINT fk_pricing_rule_turf FOREIGN KEY (turf_id) REFERENCES turf(id),

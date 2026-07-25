@@ -5,7 +5,7 @@
 -- ============================================================
 
 CREATE TABLE business (
-    id                         UUID        NOT NULL DEFAULT gen_random_uuid(),
+    id                         UUID        NOT NULL DEFAULT random_uuid(),
     name                       VARCHAR(255) NOT NULL,
     address                    TEXT,
     city                       VARCHAR(100),
@@ -16,8 +16,8 @@ CREATE TABLE business (
     whatsapp_phone_number_id   VARCHAR(100) NOT NULL,
     timezone                   VARCHAR(100) NOT NULL DEFAULT 'Asia/Kolkata',
     status                     VARCHAR(20)  NOT NULL DEFAULT 'ACTIVE',
-    created_at                 TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
-    updated_at                 TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
+    created_at                 TIMESTAMP WITH TIME ZONE  NOT NULL DEFAULT NOW(),
+    updated_at                 TIMESTAMP WITH TIME ZONE  NOT NULL DEFAULT NOW(),
 
     CONSTRAINT pk_business PRIMARY KEY (id),
     CONSTRAINT uq_business_whatsapp_phone_number_id UNIQUE (whatsapp_phone_number_id),

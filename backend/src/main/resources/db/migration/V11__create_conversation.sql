@@ -6,14 +6,14 @@
 -- ============================================================
 
 CREATE TABLE conversation (
-    id             UUID        NOT NULL DEFAULT gen_random_uuid(),
+    id             UUID        NOT NULL DEFAULT random_uuid(),
     user_id        UUID        NOT NULL,
     business_id    UUID        NOT NULL,
     role           VARCHAR(20) NOT NULL,
     current_intent VARCHAR(100),
     status         VARCHAR(20) NOT NULL DEFAULT 'ACTIVE',
-    last_activity  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    created_at     TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    last_activity  TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+    created_at     TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
 
     CONSTRAINT pk_conversation PRIMARY KEY (id),
     CONSTRAINT fk_conversation_user     FOREIGN KEY (user_id)     REFERENCES users(id),

@@ -6,11 +6,11 @@
 -- ============================================================
 
 CREATE TABLE booking_hold (
-    id         UUID        NOT NULL DEFAULT gen_random_uuid(),
+    id         UUID        NOT NULL DEFAULT random_uuid(),
     booking_id UUID        NOT NULL,
-    expires_at TIMESTAMPTZ NOT NULL,
+    expires_at TIMESTAMP WITH TIME ZONE NOT NULL,
     status     VARCHAR(20) NOT NULL DEFAULT 'ACTIVE',
-    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
 
     CONSTRAINT pk_booking_hold PRIMARY KEY (id),
     CONSTRAINT fk_booking_hold_booking FOREIGN KEY (booking_id) REFERENCES booking(id),

@@ -4,13 +4,13 @@
 -- ============================================================
 
 CREATE TABLE booking_audit (
-    id         UUID        NOT NULL DEFAULT gen_random_uuid(),
+    id         UUID        NOT NULL DEFAULT random_uuid(),
     booking_id UUID        NOT NULL,
     old_status VARCHAR(20),
     new_status VARCHAR(20) NOT NULL,
     changed_by UUID,
     reason     TEXT,
-    changed_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    changed_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
 
     CONSTRAINT pk_booking_audit PRIMARY KEY (id),
     CONSTRAINT fk_booking_audit_booking    FOREIGN KEY (booking_id) REFERENCES booking(id),

@@ -6,7 +6,7 @@
 -- ============================================================
 
 CREATE TABLE operating_hours (
-    id           UUID    NOT NULL DEFAULT gen_random_uuid(),
+    id           UUID    NOT NULL DEFAULT random_uuid(),
     turf_id      UUID    NOT NULL,
     day_of_week  INT     NOT NULL,
     opening_time TIME,

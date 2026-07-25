@@ -5,7 +5,7 @@
 -- ============================================================
 
 CREATE TABLE notification (
-    id          UUID        NOT NULL DEFAULT gen_random_uuid(),
+    id          UUID        NOT NULL DEFAULT random_uuid(),
     user_id     UUID        NOT NULL,
     booking_id  UUID,
     business_id UUID        NOT NULL,
@@ -13,8 +13,8 @@ CREATE TABLE notification (
     channel     VARCHAR(20) NOT NULL DEFAULT 'WHATSAPP',
     status      VARCHAR(20) NOT NULL DEFAULT 'PENDING',
     retry_count INT         NOT NULL DEFAULT 0,
-    sent_at     TIMESTAMPTZ,
-    created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    sent_at     TIMESTAMP WITH TIME ZONE,
+    created_at  TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
 
     CONSTRAINT pk_notification PRIMARY KEY (id),
     CONSTRAINT fk_notification_user     FOREIGN KEY (user_id)     REFERENCES users(id),

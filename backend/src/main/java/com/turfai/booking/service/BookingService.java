@@ -46,6 +46,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 @Slf4j
@@ -98,6 +99,15 @@ public class BookingService {
         // 2. Validate operating hours
         if (!operatingHoursService.isWithinOperatingHours(turf.getId(), request.getBookingDate(), request.getStartTime(), request.getEndTime())) {
             throw new OutsideOperatingHoursException("Requested time slot is outside operating hours.");
+        }
+
+        // Check for existing active bookings / holds
+        List<Booking> activeBookings = bookingRepository.findByTurfIdAndBookingDateAndStatusIn(
+                turf.getId(), request.getBookingDate(), Set.of(BookingStatus.HOLD, BookingStatus.PAYMENT_PENDING, BookingStatus.CONFIRMED));
+        boolean isAlreadyBooked = activeBookings.stream()
+                .anyMatch(b -> slotService.timesOverlap(request.getStartTime(), request.getEndTime(), b.getStartTime(), b.getEndTime()));
+        if (isAlreadyBooked) {
+            throw new SlotUnavailableException("Requested time slot is already booked or on hold.");
         }
 
         // 3. Validate user/customer

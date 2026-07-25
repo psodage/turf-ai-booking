@@ -30,9 +30,7 @@ import jakarta.persistence.UniqueConstraint;
  * A partial unique index on the table enforces no double-booking at the DB layer.
  */
 @Entity
-@Table(name = "booking", uniqueConstraints = {
-    @UniqueConstraint(name = "idx_booking_no_double_booking", columnNames = {"turf_id", "booking_date", "start_time", "end_time"})
-})
+@Table(name = "booking")
 @Getter
 @Setter
 @NoArgsConstructor

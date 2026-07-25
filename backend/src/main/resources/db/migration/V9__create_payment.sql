@@ -5,7 +5,7 @@
 -- ============================================================
 
 CREATE TABLE payment (
-    id                 UUID           NOT NULL DEFAULT gen_random_uuid(),
+    id                 UUID           NOT NULL DEFAULT random_uuid(),
     booking_id         UUID           NOT NULL,
     business_id        UUID           NOT NULL,
     customer_id        UUID           NOT NULL,
@@ -16,8 +16,8 @@ CREATE TABLE payment (
     currency           VARCHAR(10)    NOT NULL DEFAULT 'INR',
     status             VARCHAR(20)    NOT NULL DEFAULT 'CREATED',
     refund_status      VARCHAR(20)    NOT NULL DEFAULT 'NOT_REQUIRED',
-    created_at         TIMESTAMPTZ    NOT NULL DEFAULT NOW(),
-    updated_at         TIMESTAMPTZ    NOT NULL DEFAULT NOW(),
+    created_at         TIMESTAMP WITH TIME ZONE    NOT NULL DEFAULT NOW(),
+    updated_at         TIMESTAMP WITH TIME ZONE    NOT NULL DEFAULT NOW(),
 
     CONSTRAINT pk_payment PRIMARY KEY (id),
     CONSTRAINT fk_payment_booking  FOREIGN KEY (booking_id)  REFERENCES booking(id),

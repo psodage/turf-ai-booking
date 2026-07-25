@@ -5,12 +5,12 @@
 -- ============================================================
 
 CREATE TABLE report (
-    id           UUID        NOT NULL DEFAULT gen_random_uuid(),
+    id           UUID        NOT NULL DEFAULT random_uuid(),
     business_id  UUID        NOT NULL,
     report_type  VARCHAR(20) NOT NULL,
     file_path    TEXT        NOT NULL,
     generated_by UUID,
-    generated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    generated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
 
     CONSTRAINT pk_report PRIMARY KEY (id),
     CONSTRAINT fk_report_business     FOREIGN KEY (business_id)  REFERENCES business(id),

@@ -5,14 +5,14 @@
 -- ============================================================
 
 CREATE TABLE turf (
-    id          UUID         NOT NULL DEFAULT gen_random_uuid(),
+    id          UUID         NOT NULL DEFAULT random_uuid(),
     business_id UUID         NOT NULL,
     name        VARCHAR(255) NOT NULL,
     type        VARCHAR(30)  NOT NULL,
     capacity    INT,
     status      VARCHAR(20)  NOT NULL DEFAULT 'ACTIVE',
-    created_at  TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
-    updated_at  TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
+    created_at  TIMESTAMP WITH TIME ZONE  NOT NULL DEFAULT NOW(),
+    updated_at  TIMESTAMP WITH TIME ZONE  NOT NULL DEFAULT NOW(),
 
     CONSTRAINT pk_turf PRIMARY KEY (id),
     CONSTRAINT fk_turf_business FOREIGN KEY (business_id) REFERENCES business(id),

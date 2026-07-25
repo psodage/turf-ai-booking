@@ -4,11 +4,11 @@
 -- ============================================================
 
 CREATE TABLE payment_audit (
-    id              UUID        NOT NULL DEFAULT gen_random_uuid(),
+    id              UUID        NOT NULL DEFAULT random_uuid(),
     payment_id      UUID        NOT NULL,
     event           VARCHAR(100) NOT NULL,
-    gateway_payload JSONB,
-    created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    gateway_payload JSON,
+    created_at      TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
 
     CONSTRAINT pk_payment_audit PRIMARY KEY (id),
     CONSTRAINT fk_payment_audit_payment FOREIGN KEY (payment_id) REFERENCES payment(id)

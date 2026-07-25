@@ -4,11 +4,11 @@
 -- ============================================================
 
 CREATE TABLE system_setting (
-    key         VARCHAR(100) NOT NULL,
-    value       TEXT         NOT NULL,
-    description TEXT,
+    setting_key   VARCHAR(100) NOT NULL,
+    setting_value TEXT         NOT NULL,
+    description   TEXT,
 
-    CONSTRAINT pk_system_setting PRIMARY KEY (key)
+    CONSTRAINT pk_system_setting PRIMARY KEY (setting_key)
 );
 
 COMMENT ON TABLE system_setting IS 'System-wide configuration settings and defaults.';

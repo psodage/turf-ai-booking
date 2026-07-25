@@ -728,7 +728,7 @@ Stores configurable values.
 Fields
 
 ```
-key (primary key)
+setting_key (primary key)
 
 value
 

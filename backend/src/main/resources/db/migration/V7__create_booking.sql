@@ -6,7 +6,7 @@
 -- ============================================================
 
 CREATE TABLE booking (
-    id             UUID           NOT NULL DEFAULT gen_random_uuid(),
+    id             UUID           NOT NULL DEFAULT random_uuid(),
     booking_number VARCHAR(30)    NOT NULL,
     business_id    UUID           NOT NULL,
     turf_id        UUID           NOT NULL,
@@ -17,10 +17,10 @@ CREATE TABLE booking (
     price          NUMERIC(10, 2) NOT NULL,
     status         VARCHAR(20)    NOT NULL DEFAULT 'HOLD',
     booking_source VARCHAR(20)    NOT NULL DEFAULT 'WHATSAPP_AI',
-    cancelled_at   TIMESTAMPTZ,
+    cancelled_at   TIMESTAMP WITH TIME ZONE,
     cancelled_by   UUID,
-    created_at     TIMESTAMPTZ    NOT NULL DEFAULT NOW(),
-    updated_at     TIMESTAMPTZ    NOT NULL DEFAULT NOW(),
+    created_at     TIMESTAMP WITH TIME ZONE    NOT NULL DEFAULT NOW(),
+    updated_at     TIMESTAMP WITH TIME ZONE    NOT NULL DEFAULT NOW(),
 
     CONSTRAINT pk_booking PRIMARY KEY (id),
     CONSTRAINT fk_booking_business  FOREIGN KEY (business_id)  REFERENCES business(id),
@@ -51,8 +51,8 @@ CREATE INDEX idx_booking_business_status ON booking(business_id, status);
 -- ADR-004: Conflict check only applies to active statuses.
 -- EXPIRED, CANCELLED, COMPLETED, NO_SHOW slots must not block new bookings.
 -- ============================================================
-CREATE INDEX idx_booking_no_double_booking
-    ON booking(turf_id, booking_date, start_time, end_time, status);
+CREATE UNIQUE INDEX idx_booking_no_double_booking
+    ${booking_unique_index_def};
 
 COMMENT ON TABLE booking IS 'Central booking record. Partial unique index prevents double-booking (ADR-004).';
 COMMENT ON COLUMN booking.booking_number IS 'Human-readable ID: BK-{YEAR}-{SEQUENCE}. Generated from booking_number_seq.';

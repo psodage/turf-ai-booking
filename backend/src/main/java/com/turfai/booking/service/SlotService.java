@@ -66,6 +66,19 @@ public class SlotService {
         LocalTime openTime = opHours.getOpeningTime();
         LocalTime closeTime = opHours.getClosingTime();
 
+        // Check valid operating hours
+        if (openTime == null || closeTime == null || !openTime.isBefore(closeTime)) {
+            return DaySlotsResponse.builder()
+                    .turfId(turfId)
+                    .date(date)
+                    .dayOfWeek(operatingHoursService.toDayOfWeekIndex(date))
+                    .isClosed(false)
+                    .openingTime(openTime)
+                    .closingTime(closeTime)
+                    .slots(List.of())
+                    .build();
+        }
+
         // Validate 30-day advance booking window and past dates
         if (date.isBefore(todayInBusiness) || date.isAfter(todayInBusiness.plusDays(ADVANCE_BOOKING_DAYS_DEFAULT))) {
             return DaySlotsResponse.builder()
@@ -91,9 +104,11 @@ public class SlotService {
                 .toList();
 
         List<SlotResponse> slotResponses = new ArrayList<>();
-        LocalTime slotStart = openTime;
+        long totalOperatingMinutes = java.time.Duration.between(openTime, closeTime).toMinutes();
+        long totalSlots = totalOperatingMinutes / SLOT_DURATION_MINUTES;
 
-        while (slotStart.plusMinutes(SLOT_DURATION_MINUTES).isBefore(closeTime) || slotStart.plusMinutes(SLOT_DURATION_MINUTES).equals(closeTime)) {
+        for (int i = 0; i < totalSlots; i++) {
+            LocalTime slotStart = openTime.plusMinutes((long) i * SLOT_DURATION_MINUTES);
             LocalTime slotEnd = slotStart.plusMinutes(SLOT_DURATION_MINUTES);
 
             boolean isPast = date.equals(todayInBusiness) && slotStart.isBefore(currentTimeInBusiness);
@@ -120,8 +135,6 @@ public class SlotService {
                     .pricingType(priceResult.type())
                     .unavailableReason(unavailableReason)
                     .build());
-
-            slotStart = slotEnd;
         }
 
         return DaySlotsResponse.builder()

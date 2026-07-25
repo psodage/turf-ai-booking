@@ -5,13 +5,13 @@
 -- ============================================================
 
 CREATE TABLE conversation_message (
-    id                  UUID        NOT NULL DEFAULT gen_random_uuid(),
+    id                  UUID        NOT NULL DEFAULT random_uuid(),
     conversation_id     UUID        NOT NULL,
     sender              VARCHAR(10) NOT NULL,
     message             TEXT        NOT NULL,
     message_type        VARCHAR(20) NOT NULL DEFAULT 'TEXT',
     whatsapp_message_id VARCHAR(255),
-    created_at          TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    created_at          TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
 
     CONSTRAINT pk_conversation_message PRIMARY KEY (id),
     CONSTRAINT fk_conversation_message_conv FOREIGN KEY (conversation_id) REFERENCES conversation(id),

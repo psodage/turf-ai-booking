@@ -27,11 +27,11 @@ public class SystemSetting {
 
     @Id
     @NotBlank
-    @Column(name = "key", nullable = false, length = 100)
-    private String key;
+    @Column(name = "setting_key", nullable = false, length = 100)
+    private String settingKey;
 
     @NotBlank
-    @Column(name = "value", nullable = false, columnDefinition = "text")
+    @Column(name = "setting_value", nullable = false, columnDefinition = "text")
     private String value;
 
     @Column(name = "description", columnDefinition = "text")
@@ -42,11 +42,11 @@ public class SystemSetting {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         SystemSetting that = (SystemSetting) o;
-        return key != null && Objects.equals(key, that.key);
+        return settingKey != null && Objects.equals(settingKey, that.settingKey);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(key);
+        return Objects.hash(settingKey);
     }
 }

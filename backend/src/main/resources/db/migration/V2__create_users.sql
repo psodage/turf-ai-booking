@@ -5,7 +5,7 @@
 -- ============================================================
 
 CREATE TABLE users (
-    id          UUID         NOT NULL DEFAULT gen_random_uuid(),
+    id          UUID         NOT NULL DEFAULT random_uuid(),
     business_id UUID,
     name        VARCHAR(255) NOT NULL,
     phone       VARCHAR(20)  NOT NULL,
@@ -13,8 +13,8 @@ CREATE TABLE users (
     role        VARCHAR(20)  NOT NULL,
     language    VARCHAR(10)  NOT NULL DEFAULT 'en',
     status      VARCHAR(20)  NOT NULL DEFAULT 'ACTIVE',
-    created_at  TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
-    updated_at  TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
+    created_at  TIMESTAMP WITH TIME ZONE  NOT NULL DEFAULT NOW(),
+    updated_at  TIMESTAMP WITH TIME ZONE  NOT NULL DEFAULT NOW(),
 
     CONSTRAINT pk_users PRIMARY KEY (id),
     CONSTRAINT fk_users_business FOREIGN KEY (business_id) REFERENCES business(id),

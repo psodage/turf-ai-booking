@@ -5,14 +5,14 @@
 -- ============================================================
 
 CREATE TABLE blocked_slot (
-    id         UUID        NOT NULL DEFAULT gen_random_uuid(),
+    id         UUID        NOT NULL DEFAULT random_uuid(),
     turf_id    UUID        NOT NULL,
     date       DATE        NOT NULL,
     start_time TIME        NOT NULL,
     end_time   TIME        NOT NULL,
     reason     VARCHAR(30) NOT NULL,
     created_by UUID        NOT NULL,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
 
     CONSTRAINT pk_blocked_slot PRIMARY KEY (id),
     CONSTRAINT fk_blocked_slot_turf FOREIGN KEY (turf_id) REFERENCES turf(id),
