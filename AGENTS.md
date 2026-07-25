@@ -1,7 +1,7 @@
 # AGENTS.md — Coding Standards & Guidelines
 
 ## Tech Stack
-- **Language:** Java 21
+- **Language:** Java 17+ (Java 21 compatible)
 - **Framework:** Spring Boot 3.5
 - **Database:** PostgreSQL 16
 - **ORM:** Spring Data JPA

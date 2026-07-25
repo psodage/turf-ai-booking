@@ -8,7 +8,7 @@
 # Overall Progress
 
 - [x] Phase 0 - Documentation & Architecture
-- [ ] Phase 1 - Project Setup
+- [x] Phase 1 - Project Setup
 - [ ] Phase 2 - Database
 - [ ] Phase 3 - Booking Engine
 - [ ] Phase 4 - WhatsApp Integration
@@ -74,41 +74,41 @@
 - [x] Create GitHub Repository
 - [x] Configure README
 - [x] Configure .gitignore
-- [ ] Create project structure
+- [x] Create project structure
 
 ---
 
 ## Backend
 
-- [ ] Initialize Spring Boot 3.5
-- [ ] Java 21
-- [ ] Maven
-- [ ] Spring Web
-- [ ] Spring Security
-- [ ] Spring Data JPA
-- [ ] Validation
-- [ ] Lombok
-- [ ] PostgreSQL Driver
-- [ ] Flyway
-- [ ] Actuator
+- [x] Initialize Spring Boot 3.5
+- [x] Java 17+ / Java 21 compatibility
+- [x] Maven
+- [x] Spring Web
+- [x] Spring Security
+- [x] Spring Data JPA
+- [x] Validation
+- [x] Lombok
+- [x] PostgreSQL Driver
+- [x] Flyway
+- [x] Actuator
 
 ---
 
 ## Configuration
 
-- [ ] application.yml (dev, staging, prod profiles)
-- [ ] Environment Variables
-- [ ] Logging (structured JSON)
-- [ ] Global Exception Handler
-- [ ] Correlation ID Filter (MDC)
-- [ ] Base Entity classes
+- [x] application.yml (dev, staging, prod profiles)
+- [x] Environment Variables
+- [x] Logging (structured JSON)
+- [x] Global Exception Handler
+- [x] Correlation ID Filter (MDC)
+- [x] Base Entity classes
 
 ---
 
 ## Docker
 
-- [ ] docker-compose.yml (Spring Boot + PostgreSQL)
-- [ ] PostgreSQL Container
+- [x] docker-compose.yml (Spring Boot + PostgreSQL)
+- [x] PostgreSQL Container
 
 ---
 
@@ -122,39 +122,39 @@
 
 ## Flyway
 
-- [ ] Configure Flyway
-- [ ] Initial Migration (all core tables)
-- [ ] Seed Data (test business + turf)
+- [x] Configure Flyway
+- [x] Initial Migration (all core tables V1-V17)
+- [x] Seed Data (repeatable migration R__seed_demo_data.sql for Green Pitch Kolhapur)
 
 ---
 
 ## Tables
 
-- [ ] Business
-- [ ] Users
-- [ ] Turf
-- [ ] Operating Hours
-- [ ] Pricing Rule
-- [ ] Booking
-- [ ] Booking Hold
-- [ ] Payment
-- [ ] Blocked Slot
-- [ ] Conversation
-- [ ] Conversation Message
-- [ ] Notification
-- [ ] Booking Audit
-- [ ] Payment Audit
-- [ ] Report
-- [ ] System Setting
+- [x] Business
+- [x] Users
+- [x] Turf
+- [x] Operating Hours
+- [x] Pricing Rule
+- [x] Booking
+- [x] Booking Hold
+- [x] Payment
+- [x] Blocked Slot
+- [x] Conversation
+- [x] Conversation Message
+- [x] Notification
+- [x] Booking Audit
+- [x] Payment Audit
+- [x] Report
+- [x] System Setting
 
 ---
 
 ## Repository Layer
 
-- [ ] Create JPA Entities
-- [ ] Repository Interfaces
-- [ ] Relationships
-- [ ] Indexes
+- [x] Create JPA Entities
+- [x] Repository Interfaces
+- [x] Relationships
+- [x] Indexes
 
 ---
 
