@@ -32,7 +32,7 @@ public class WhatsAppWebhookController {
     private final WhatsAppWebhookProcessor whatsAppWebhookProcessor;
     private final ObjectMapper objectMapper;
 
-    @GetMapping(produces = MediaType.TEXT_PLAIN_VALUE)
+    @GetMapping
     @Operation(summary = "Meta Webhook Verification Handshake (GET)")
     public ResponseEntity<String> verifyWebhook(
             @RequestParam(name = "hub.mode", required = false) String mode,
@@ -51,7 +51,7 @@ public class WhatsAppWebhookController {
         }
     }
 
-    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.TEXT_PLAIN_VALUE)
+    @PostMapping
     @Operation(summary = "Meta Webhook Event Callback (POST)")
     public ResponseEntity<String> receiveWebhook(
             @RequestHeader(name = "X-Hub-Signature-256", required = false) String signatureHeader,
