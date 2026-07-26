@@ -1,0 +1,39 @@
+{
+  "object": "whatsapp_business_account",
+  "entry": [
+    {
+      "id": "1351567057191537",
+      "changes": [
+        {
+          "value": {
+            "messaging_product": "whatsapp",
+            "metadata": {
+              "display_phone_number": "15551856886",
+              "phone_number_id": "1284997344689548"
+            },
+            "contacts": [
+              {
+                "profile": {
+                  "name": "Prathamesh Sodage"
+                },
+                "wa_id": "919325025671"
+              }
+            ],
+            "messages": [
+              {
+                "from": "919325025671",
+                "id": "wamid.TEST_MANUAL_001",
+                "timestamp": "1785061700",
+                "text": {
+                  "body": "Hi"
+                },
+                "type": "text"
+              }
+            ]
+          },
+          "field": "messages"
+        }
+      ]
+    }
+  ]
+}
