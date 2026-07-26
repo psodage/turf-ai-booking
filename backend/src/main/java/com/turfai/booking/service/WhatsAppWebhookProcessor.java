@@ -65,10 +65,12 @@ public class WhatsAppWebhookProcessor {
                         continue;
                     }
 
+                    log.info("Processing incoming WhatsApp message from phoneNumberId: {}", phoneNumberId);
+
                     // ADR-006: Business Routing by connected WhatsApp Business phone_number_id
                     Optional<Business> businessOpt = businessRepository.findByWhatsappPhoneNumberId(phoneNumberId);
                     if (businessOpt.isEmpty()) {
-                        log.warn("No Business found registered for WhatsApp phone_number_id: {}", phoneNumberId);
+                        log.warn("No Business found registered for WhatsApp phone_number_id: {}. Active business count check needed.", phoneNumberId);
                         continue;
                     }
                     Business business = businessOpt.get();
