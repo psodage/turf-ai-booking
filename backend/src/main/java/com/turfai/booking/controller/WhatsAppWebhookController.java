@@ -57,7 +57,7 @@ public class WhatsAppWebhookController {
             @RequestHeader(name = "X-Hub-Signature-256", required = false) String signatureHeader,
             @RequestBody String rawPayload) {
 
-        log.debug("Received WhatsApp webhook POST event. Payload size: {} bytes", rawPayload != null ? rawPayload.length() : 0);
+        log.info("Received WhatsApp webhook POST event. Payload size: {} bytes", rawPayload != null ? rawPayload.length() : 0);
 
         // 1. HMAC-SHA256 Signature Verification
         whatsAppSignatureValidator.validateSignature(rawPayload, signatureHeader);
