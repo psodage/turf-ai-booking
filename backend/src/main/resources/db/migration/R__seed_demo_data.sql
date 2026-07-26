@@ -24,7 +24,7 @@ VALUES (
     '416012',
     'https://maps.google.com/?q=Rankala+Kolhapur',
     '+919876543210',
-    'PHONE_NUM_ID_DEMO_001',
+    '1284997344689548',
     'Asia/Kolkata',
     'ACTIVE'
 );
