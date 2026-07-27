@@ -48,6 +48,7 @@ class BookingServiceTest {
     @Mock private BookingHoldRepository bookingHoldRepository;
     @Mock private BookingAuditRepository bookingAuditRepository;
     @Mock private UserRepository userRepository;
+    @Mock private WhatsAppService whatsAppService;
     @Mock private EntityManager entityManager;
 
     private BookingService bookingService;
@@ -60,7 +61,7 @@ class BookingServiceTest {
 
     @BeforeEach
     void setUp() {
-        bookingService = new BookingService(turfService, operatingHoursService, pricingService, slotService, bookingRepository, bookingHoldRepository, bookingAuditRepository, userRepository);
+        bookingService = new BookingService(turfService, operatingHoursService, pricingService, slotService, bookingRepository, bookingHoldRepository, bookingAuditRepository, userRepository, whatsAppService);
 
         testBusiness = Business.builder()
                 .name("Green Pitch")
