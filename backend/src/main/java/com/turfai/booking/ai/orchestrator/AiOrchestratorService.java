@@ -113,7 +113,28 @@ public class AiOrchestratorService {
 
         try {
             if ("checkAvailability".equals(toolName)) {
-                return "📅 Slots checked successfully! Available slots for tomorrow:\n• 06:00 PM - 07:00 PM (₹800)\n• 07:00 PM - 08:00 PM (₹1000 PEAK)\n\nReply with your preferred slot to place a hold!";
+                return "📅 *Available Slots for Tomorrow:*\n• 06:00 PM - 07:00 PM (₹800)\n• 07:00 PM - 08:00 PM (₹1,000 PEAK)\n\nReply with your preferred slot (e.g., 'Book 6 to 7') to place a 10-minute hold!";
+            } else if ("createBookingHold".equals(toolName)) {
+                String bookingRef = "N/A";
+                String paymentUrl = "https://rzp.io/i/plink_demo";
+                Object price = "800";
+
+                if (result.getData() instanceof Map<?, ?> dataMap) {
+                    if (dataMap.containsKey("booking_number")) bookingRef = String.valueOf(dataMap.get("booking_number"));
+                    if (dataMap.containsKey("payment_url")) paymentUrl = String.valueOf(dataMap.get("payment_url"));
+                    if (dataMap.containsKey("price")) price = dataMap.get("price");
+                }
+
+                StringBuilder sb = new StringBuilder();
+                sb.append("⏳ *Booking Hold Created!*\n\n");
+                sb.append("• *Booking Ref:* ").append(bookingRef).append("\n");
+                sb.append("• *Slot:* Tomorrow 06:00 PM - 07:00 PM\n");
+                sb.append("• *Amount Payable:* ₹").append(price).append("\n");
+                sb.append("• *Hold Duration:* 10 Minutes\n\n");
+                sb.append("💳 *Click Link to Pay & Confirm:* \n");
+                sb.append(paymentUrl).append("\n\n");
+                sb.append("*(Complete payment within 10 mins via UPI / Card / NetBanking to lock your slot!)*");
+                return sb.toString();
             } else if ("getTodayBookings".equals(toolName) || "getBusinessSummary".equals(toolName)) {
                 return "📊 Business Summary for Today:\n" + objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(result.getData());
             } else {
