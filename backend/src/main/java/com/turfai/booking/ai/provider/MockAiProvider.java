@@ -21,9 +21,24 @@ public class MockAiProvider implements AiProvider {
             lastMessage = request.getMessages().get(request.getMessages().size() - 1).getOrDefault("content", "").toLowerCase();
         }
 
+        if (lastMessage.contains("hold") || lastMessage.contains("6 to 7") || lastMessage.contains("6:00") || lastMessage.contains("06:00")
+                || lastMessage.contains("7 to 8") || lastMessage.contains("07:00") || lastMessage.contains("first") || lastMessage.contains("second")) {
+            return AiResponse.builder()
+                    .isToolCall(true)
+                    .toolName("createBookingHold")
+                    .toolArguments(Map.of(
+                            "date", LocalDate.now().plusDays(1).toString(),
+                            "startTime", "18:00:00",
+                            "endTime", "19:00:00"
+                    ))
+                    .promptTokens(130)
+                    .completionTokens(50)
+                    .build();
+        }
+
         if (lastMessage.contains("availability") || lastMessage.contains("slot") || lastMessage.contains("available") 
                 || lastMessage.contains("book") || lastMessage.contains("reserve") || lastMessage.contains("turf")
-                || lastMessage.contains("time") || lastMessage.contains("play") || lastMessage.matches(".*\\d.*")) {
+                || lastMessage.contains("time") || lastMessage.contains("play")) {
             return AiResponse.builder()
                     .isToolCall(true)
                     .toolName("checkAvailability")
