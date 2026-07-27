@@ -23,6 +23,14 @@ public class SecurityConfig {
             .cors(AbstractHttpConfigurer::disable)
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
+                // Public static pages — landing page & legal docs
+                .requestMatchers(
+                    "/", "/index.html",
+                    "/privacy-policy.html", "/terms.html", "/refund-policy.html",
+                    "/css/**", "/js/**", "/images/**",
+                    "/favicon.ico", "/robots.txt"
+                ).permitAll()
+                // API, webhooks, and actuator
                 .requestMatchers("/actuator/**", "/webhook/**", "/api/v1/**").permitAll()
                 .anyRequest().authenticated()
             );
