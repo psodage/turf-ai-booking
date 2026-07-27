@@ -15,22 +15,30 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RestController
-@RequestMapping("/webhook/razorpay")
+@RequestMapping({"/webhook/razorpay", "/api/v1/payments/webhook"})
 @RequiredArgsConstructor
 @Tag(name = "Razorpay Webhook API", description = "Authoritative payment completion webhook callback receiver endpoint.")
 public class RazorpayWebhookController {
 
     private final PaymentService paymentService;
 
-    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.TEXT_PLAIN_VALUE)
+    @PostMapping
     @Operation(summary = "Razorpay Payment Webhook Callback (POST)")
     public ResponseEntity<String> receiveWebhook(
             @RequestHeader(name = "X-Razorpay-Signature", required = false) String signatureHeader,
             @RequestBody String rawPayload) {
 
-        log.debug("Received Razorpay webhook POST event. Payload size: {} bytes", rawPayload != null ? rawPayload.length() : 0);
+        log.info(">>> Razorpay POST webhook received. Payload size: {} bytes, Signature present: {}",
+                rawPayload != null ? rawPayload.length() : 0,
+                signatureHeader != null);
 
-        paymentService.processRazorpayWebhook(rawPayload, signatureHeader);
+        try {
+            paymentService.processRazorpayWebhook(rawPayload, signatureHeader);
+            log.info(">>> Razorpay webhook processed successfully.");
+        } catch (Exception ex) {
+            log.error(">>> Error processing Razorpay webhook payload", ex);
+        }
+
         return ResponseEntity.ok("OK");
     }
 }

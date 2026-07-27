@@ -66,6 +66,7 @@ public class BookingService {
     private final BookingHoldRepository bookingHoldRepository;
     private final BookingAuditRepository bookingAuditRepository;
     private final UserRepository userRepository;
+    private final WhatsAppService whatsAppService;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -222,7 +223,37 @@ public class BookingService {
         }
 
         logAudit(booking, oldStatus, BookingStatus.CONFIRMED, null, "Confirmed via payment. Payment ID: " + gatewayPaymentId);
+        sendConfirmationWhatsAppNotification(booking);
         return mapToBookingResponse(booking);
+    }
+
+    private void sendConfirmationWhatsAppNotification(Booking booking) {
+        try {
+            if (booking.getCustomer() != null && booking.getCustomer().getPhone() != null) {
+                String phone = booking.getCustomer().getPhone();
+                String confirmMsg = String.format(
+                        "🎉 *BOOKING CONFIRMED!* ⚽\n\n" +
+                        "• *Booking Ref:* %s\n" +
+                        "• *Turf:* %s\n" +
+                        "• *Date:* %s\n" +
+                        "• *Time:* %s - %s\n" +
+                        "• *Amount Paid:* ₹%s\n" +
+                        "• *Status:* CONFIRMED ✅\n\n" +
+                        "Thank you for booking with %s! We look forward to hosting you.",
+                        booking.getBookingNumber(),
+                        booking.getTurf() != null ? booking.getTurf().getName() : "Green Pitch Turf",
+                        booking.getBookingDate(),
+                        booking.getStartTime(),
+                        booking.getEndTime(),
+                        booking.getPrice(),
+                        booking.getBusiness() != null ? booking.getBusiness().getName() : "Green Pitch Kolhapur"
+                );
+                whatsAppService.sendTextMessage(phone, confirmMsg);
+                log.info("Sent automated WhatsApp confirmation message to customer {} for booking {}", phone, booking.getBookingNumber());
+            }
+        } catch (Exception ex) {
+            log.error("Failed to send automated WhatsApp confirmation message for booking {}", booking.getBookingNumber(), ex);
+        }
     }
 
     /**
