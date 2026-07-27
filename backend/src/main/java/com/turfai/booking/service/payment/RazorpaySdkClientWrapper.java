@@ -3,6 +3,7 @@ package com.turfai.booking.service.payment;
 import com.turfai.booking.config.RazorpayProperties;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -16,7 +17,7 @@ import java.util.Map;
 
 @Slf4j
 @Component
-@ConditionalOnProperty(name = "razorpay.mode", havingValue = "live")
+@ConditionalOnExpression("'${razorpay.mode:mock}'.equalsIgnoreCase('live') || '${razorpay.mode:mock}'.equalsIgnoreCase('test')")
 @RequiredArgsConstructor
 public class RazorpaySdkClientWrapper implements RazorpayClientWrapper {
 
