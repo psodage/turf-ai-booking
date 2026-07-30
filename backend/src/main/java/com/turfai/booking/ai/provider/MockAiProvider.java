@@ -23,7 +23,9 @@ public class MockAiProvider implements AiProvider {
 
         // View Booking intent (or phone number input for lookup)
         if (lastMessage.contains("view my booking") || lastMessage.contains("my booking") || lastMessage.contains("view_booking") 
-                || lastMessage.contains("view booking") || lastMessage.contains("my bookings") || lastMessage.matches(".*\\b[0-9]{10}\\b.*")) {
+                || lastMessage.contains("view booking") || lastMessage.contains("my bookings")
+                || lastMessage.contains("meri booking") || lastMessage.contains("maji booking") || lastMessage.contains("माझी बुकिंग") || lastMessage.contains("मेरी बुकिंग")
+                || lastMessage.matches(".*\\b[0-9]{10}\\b.*")) {
             String extractedPhone = "";
             java.util.regex.Matcher matcher = java.util.regex.Pattern.compile("\\b[0-9]{10}\\b").matcher(lastMessage);
             if (matcher.find()) {
@@ -40,7 +42,8 @@ public class MockAiProvider implements AiProvider {
         }
 
         // Location & Map intent
-        if (lastMessage.contains("location") || lastMessage.contains("address") || lastMessage.contains("map") || lastMessage.contains("where") || lastMessage.contains("location_map")) {
+        if (lastMessage.contains("location") || lastMessage.contains("address") || lastMessage.contains("map") || lastMessage.contains("where") 
+                || lastMessage.contains("location_map") || lastMessage.contains("लोकेशन") || lastMessage.contains("स्थान") || lastMessage.contains("पत्ता") || lastMessage.contains("पता")) {
             return AiResponse.builder()
                     .isToolCall(true)
                     .toolName("getLocation")
@@ -65,24 +68,27 @@ public class MockAiProvider implements AiProvider {
                     .build();
         }
 
+        if (lastMessage.contains("price") || lastMessage.contains("rate") || lastMessage.contains("cost") || lastMessage.contains("charge") 
+                || lastMessage.contains("pricing") || lastMessage.contains("दर") || lastMessage.contains("दरपत्रक") || lastMessage.contains("रेट") || lastMessage.contains("मूल्य")) {
+            return AiResponse.builder()
+                    .isToolCall(true)
+                    .toolName("getPricing")
+                    .toolArguments(Map.of())
+                    .promptTokens(90)
+                    .completionTokens(40)
+                    .build();
+        }
+
         if (lastMessage.contains("availability") || lastMessage.contains("slot") || lastMessage.contains("available") 
                 || lastMessage.contains("book") || lastMessage.contains("reserve") || lastMessage.contains("turf")
-                || lastMessage.contains("time") || lastMessage.contains("play") || lastMessage.contains("check_availability")) {
+                || lastMessage.contains("time") || lastMessage.contains("play") || lastMessage.contains("check_availability")
+                || lastMessage.contains("स्लॉट") || lastMessage.contains("बुकिंग") || lastMessage.contains("बुक") || lastMessage.contains("उद्या") || lastMessage.contains("कल")) {
             return AiResponse.builder()
                     .isToolCall(true)
                     .toolName("checkAvailability")
                     .toolArguments(Map.of("date", LocalDate.now().plusDays(1).toString()))
                     .promptTokens(120)
                     .completionTokens(45)
-                    .build();
-        }
-
-        if (lastMessage.contains("price") || lastMessage.contains("rate") || lastMessage.contains("cost") || lastMessage.contains("charge") || lastMessage.contains("pricing")) {
-            return AiResponse.builder()
-                    .isToolCall(false)
-                    .content("⚽ *Green Pitch Kolhapur Pricing:*\n\n• Standard Hours (6 AM - 5 PM): ₹800/hr\n• Peak Hours (5 PM - 11 PM): ₹1,000/hr\n\nReply with your preferred date & time to check available slots!")
-                    .promptTokens(90)
-                    .completionTokens(40)
                     .build();
         }
 
@@ -96,7 +102,7 @@ public class MockAiProvider implements AiProvider {
                     .build();
         }
 
-        if (lastMessage.contains("cancel")) {
+        if (lastMessage.contains("cancel") || lastMessage.contains("रद्द") || lastMessage.contains("cancel_booking")) {
             return AiResponse.builder()
                     .isToolCall(true)
                     .toolName("cancelBooking")

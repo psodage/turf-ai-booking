@@ -1,7 +1,7 @@
 package com.turfai.booking.ai.orchestrator;
 
-import com.turfai.booking.dto.whatsapp.outbound.OutboundRow;
-import com.turfai.booking.dto.whatsapp.outbound.OutboundSection;
+import com.turfai.booking.ai.language.LanguageDetector;
+import com.turfai.booking.ai.language.MultilingualMessageFormatter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.turfai.booking.ai.memory.ConversationContextBuilder;
 import com.turfai.booking.ai.prompt.PromptManager;
@@ -40,42 +40,61 @@ public class AiOrchestratorService {
     private final ConversationService conversationService;
     private final TurfRepository turfRepository;
     private final ObjectMapper objectMapper;
+    private final LanguageDetector languageDetector;
+    private final MultilingualMessageFormatter multilingualMessageFormatter;
 
     @Transactional
     public void processUserMessage(Conversation conversation) {
         long startTime = System.currentTimeMillis();
 
-        // 1. Build System Prompt & History
-        String systemPrompt = promptManager.buildSystemPrompt(conversation.getUser(), conversation.getBusiness());
         List<Map<String, String>> history = conversationContextBuilder.buildMessageHistory(conversation);
+
+        // 1. Detect & Update Language State
+        String lastUserMsg = "";
+        if (history != null && !history.isEmpty()) {
+            for (int i = history.size() - 1; i >= 0; i--) {
+                Map<String, String> m = history.get(i);
+                if ("user".equals(m.get("role"))) {
+                    lastUserMsg = m.getOrDefault("content", "");
+                    break;
+                }
+            }
+        }
+
+        String currentLang = conversation.getPreferredLanguage();
+        String detectedLang = languageDetector.detectLanguage(lastUserMsg, currentLang);
+        conversation.setPreferredLanguage(detectedLang);
+
+        // 2. Build System Prompt & History
+        String systemPrompt = promptManager.buildSystemPrompt(conversation.getUser(), conversation.getBusiness(), detectedLang);
 
         AiRequest request = AiRequest.builder()
                 .systemPrompt(systemPrompt)
                 .messages(history)
                 .build();
 
-        // 2. Invoke AI Provider
+        // 3. Invoke AI Provider
         AiResponse response = aiProvider.generateResponse(request);
 
         String replyText;
 
-        // 3. Handle Tool Calls vs Direct Text Response
+        // 4. Handle Tool Calls vs Direct Text Response
         if (response.isToolCall()) {
-            log.info("AI requested tool call: {} for conversation {}", response.getToolName(), conversation.getId());
+            log.info("AI requested tool call: {} for conversation {} in language {}", response.getToolName(), conversation.getId(), detectedLang);
             if ("showMenu".equals(response.getToolName())) {
-                sendInteractiveMenu(conversation);
+                sendInteractiveMenu(conversation, detectedLang);
                 return;
             } else if ("getLocation".equals(response.getToolName())) {
-                sendLocationResponse(conversation);
+                sendLocationResponse(conversation, detectedLang);
                 return;
             } else if ("getUserBookings".equals(response.getToolName())) {
                 String inputPhone = (response.getToolArguments() != null && response.getToolArguments().containsKey("phone")) 
                         ? String.valueOf(response.getToolArguments().get("phone")) : null;
-                sendUserBookingsResponse(conversation, inputPhone);
+                sendUserBookingsResponse(conversation, inputPhone, detectedLang);
                 return;
             }
             ToolResult toolResult = executeToolCall(response.getToolName(), response.getToolArguments(), conversation);
-            replyText = formatToolResultForUser(response.getToolName(), toolResult);
+            replyText = formatToolResultForUser(response.getToolName(), toolResult, detectedLang);
         } else {
             replyText = response.getContent();
         }
@@ -84,85 +103,70 @@ public class AiOrchestratorService {
         log.info("AI Orchestrator finished in {}ms. Tokens: prompt={}, completion={}. ConvId={}",
                 executionTime, response.getPromptTokens(), response.getCompletionTokens(), conversation.getId());
 
-        // 4. Send Outbound WhatsApp Reply
+        // 5. Send Outbound WhatsApp Reply
         whatsAppService.sendTextMessage(conversation.getUser().getPhone(), replyText);
 
-        // 5. Persist Outgoing Message in Conversation
+        // 6. Persist Outgoing Message in Conversation
         conversationService.saveOutgoingMessage(conversation, replyText, MessageType.TEXT);
     }
 
-    private void sendInteractiveMenu(Conversation conversation) {
-        String headerText = "👋 Welcome to Green Pitch Kolhapur";
-        String bodyText = "Please select an option below or type your query.";
-        String buttonText = "Menu Options";
+    private void sendInteractiveMenu(Conversation conversation, String lang) {
+        MultilingualMessageFormatter.MenuConfig menuConfig = multilingualMessageFormatter.getMenuConfig(lang);
 
-        List<OutboundRow> rows = List.of(
-                OutboundRow.builder().id("check_availability").title("📅 Check Availability").description("Check available slots").build(),
-                OutboundRow.builder().id("pricing").title("💰 Pricing").description("View booking rates").build(),
-                OutboundRow.builder().id("location_map").title("📍 Location & Map").description("Get our location").build(),
-                OutboundRow.builder().id("view_booking").title("📖 View My Booking").description("View your existing booking details").build(),
-                OutboundRow.builder().id("cancel_booking").title("❌ Cancel Booking").description("Cancel an existing booking").build()
+        whatsAppService.sendListMessage(
+                conversation.getUser().getPhone(),
+                menuConfig.header(),
+                menuConfig.body(),
+                menuConfig.buttonText(),
+                menuConfig.sections()
         );
-
-        List<OutboundSection> sections = List.of(
-                OutboundSection.builder().title("Menu Options").rows(rows).build()
-        );
-
-        whatsAppService.sendListMessage(conversation.getUser().getPhone(), headerText, bodyText, buttonText, sections);
-        conversationService.saveOutgoingMessage(conversation, headerText + "\n" + bodyText, MessageType.LIST);
-        log.info("Sent interactive WhatsApp menu list to customer {}", conversation.getUser().getPhone());
+        conversationService.saveOutgoingMessage(conversation, menuConfig.header() + "\n" + menuConfig.body(), MessageType.LIST);
+        log.info("Sent interactive WhatsApp menu list to customer {} in language {}", conversation.getUser().getPhone(), lang);
     }
 
-    private void sendLocationResponse(Conversation conversation) {
+    private void sendLocationResponse(Conversation conversation, String lang) {
         ToolResult toolResult = aiToolGateway.getLocation(conversation.getBusiness());
+        String name = conversation.getBusiness() != null ? conversation.getBusiness().getName() : "Green Pitch Kolhapur";
+        String address = "Near Rankala Lake, Ring Road, Kolhapur, Maharashtra (416012)";
+
         if (toolResult.isSuccess() && toolResult.getData() instanceof Map<?, ?> dataMap) {
             Boolean hasNative = (Boolean) dataMap.get("has_native_location");
             if (Boolean.TRUE.equals(hasNative)) {
                 double lat = ((Number) dataMap.get("latitude")).doubleValue();
                 double lng = ((Number) dataMap.get("longitude")).doubleValue();
-                String name = String.valueOf(dataMap.get("name"));
-                String address = String.valueOf(dataMap.get("address"));
+                if (dataMap.containsKey("name")) name = String.valueOf(dataMap.get("name"));
+                if (dataMap.containsKey("address")) address = String.valueOf(dataMap.get("address"));
 
                 whatsAppService.sendLocationMessage(conversation.getUser().getPhone(), lat, lng, name, address);
-                String summaryMsg = String.format("📍 *%s*\n%s", name, address);
+                String summaryMsg = multilingualMessageFormatter.formatLocationSummary(lang, name, address);
                 whatsAppService.sendTextMessage(conversation.getUser().getPhone(), summaryMsg);
                 conversationService.saveOutgoingMessage(conversation, summaryMsg, MessageType.TEXT);
-                log.info("Sent native WhatsApp location message for business {} to user {}", name, conversation.getUser().getPhone());
+                log.info("Sent native WhatsApp location message for business {} to user {} in {}", name, conversation.getUser().getPhone(), lang);
                 return;
             }
         }
 
-        // Fallback text message if location is missing lat/lng
-        String fallbackMsg = "📍 *Green Pitch Kolhapur*\nAddress: Near Rankala Lake, Ring Road, Kolhapur, Maharashtra (416012)\nGoogle Maps: https://maps.google.com/?q=Rankala+Kolhapur";
+        // Fallback location text message
+        String fallbackMsg = multilingualMessageFormatter.formatLocationSummary(lang, name, address);
         whatsAppService.sendTextMessage(conversation.getUser().getPhone(), fallbackMsg);
         conversationService.saveOutgoingMessage(conversation, fallbackMsg, MessageType.TEXT);
     }
 
-    private void sendUserBookingsResponse(Conversation conversation, String inputPhone) {
+    private void sendUserBookingsResponse(Conversation conversation, String inputPhone, String lang) {
         ToolResult toolResult = aiToolGateway.getUserBookings(conversation.getUser(), inputPhone);
         String messageText;
 
         if (toolResult.isSuccess() && toolResult.getData() instanceof Map<?, ?> dataMap && Boolean.TRUE.equals(dataMap.get("found"))) {
             @SuppressWarnings("unchecked")
             List<Map<String, Object>> bookings = (List<Map<String, Object>>) dataMap.get("bookings");
-            StringBuilder sb = new StringBuilder();
-            sb.append("📖 *Your Booking Details:*\n\n");
-            for (Map<String, Object> b : bookings) {
-                sb.append("• *Booking ID:* ").append(b.get("booking_id")).append("\n");
-                sb.append("• *Date:* ").append(b.get("date")).append("\n");
-                sb.append("• *Time Slot:* ").append(b.get("time_slot")).append("\n");
-                sb.append("• *Turf Name:* ").append(b.get("turf_name")).append("\n");
-                sb.append("• *Status:* ").append(b.get("status")).append("\n");
-                sb.append("• *Amount Paid:* ₹").append(b.get("amount_paid")).append("\n\n");
-            }
-            messageText = sb.toString().trim();
+            messageText = multilingualMessageFormatter.formatBookingDetails(lang, bookings);
         } else {
-            messageText = "ℹ️ No bookings found for your registered account.\n\nIf your booking was created under a different number, please reply with your registered 10-digit mobile number to search.";
+            messageText = multilingualMessageFormatter.formatNoBookingFound(lang);
         }
 
         whatsAppService.sendTextMessage(conversation.getUser().getPhone(), messageText);
         conversationService.saveOutgoingMessage(conversation, messageText, MessageType.TEXT);
-        log.info("Sent user booking lookup response to {}", conversation.getUser().getPhone());
+        log.info("Sent user booking lookup response to {} in language {}", conversation.getUser().getPhone(), lang);
     }
 
     private ToolResult executeToolCall(String toolName, Map<String, Object> args, Conversation conversation) {
@@ -188,7 +192,7 @@ public class AiOrchestratorService {
         }
     }
 
-    private String formatToolResultForUser(String toolName, ToolResult result) {
+    private String formatToolResultForUser(String toolName, ToolResult result, String lang) {
         if (!result.isSuccess()) {
             StringBuilder sb = new StringBuilder();
             sb.append("⚠️ ").append(result.getMessage());
@@ -201,7 +205,11 @@ public class AiOrchestratorService {
 
         try {
             if ("checkAvailability".equals(toolName)) {
-                return "📅 *Available Slots for Tomorrow:*\n• 06:00 PM - 07:00 PM (₹800)\n• 07:00 PM - 08:00 PM (₹1,000 PEAK)\n\nReply with your preferred slot (e.g., 'Book 6 to 7') to place a 10-minute hold!";
+                return multilingualMessageFormatter.formatAvailability(lang);
+            } else if ("getPricing".equals(toolName)) {
+                return multilingualMessageFormatter.formatPricing(lang);
+            } else if ("cancelBooking".equals(toolName)) {
+                return multilingualMessageFormatter.formatCancellation(lang);
             } else if ("createBookingHold".equals(toolName)) {
                 String bookingRef = "N/A";
                 String paymentUrl = "https://rzp.io/i/plink_demo";
@@ -213,16 +221,7 @@ public class AiOrchestratorService {
                     if (dataMap.containsKey("price")) price = dataMap.get("price");
                 }
 
-                StringBuilder sb = new StringBuilder();
-                sb.append("⏳ *Booking Hold Created!*\n\n");
-                sb.append("• *Booking Ref:* ").append(bookingRef).append("\n");
-                sb.append("• *Slot:* Tomorrow 06:00 PM - 07:00 PM\n");
-                sb.append("• *Amount Payable:* ₹").append(price).append("\n");
-                sb.append("• *Hold Duration:* 7.5 Minutes\n\n");
-                sb.append("💳 *Click Link to Pay & Confirm:* \n");
-                sb.append(paymentUrl).append("\n\n");
-                sb.append("*(Complete payment within 5 mins via UPI / Card / NetBanking to lock your slot!)*");
-                return sb.toString();
+                return multilingualMessageFormatter.formatHoldCreated(lang, bookingRef, paymentUrl, price);
             } else if ("getTodayBookings".equals(toolName) || "getBusinessSummary".equals(toolName)) {
                 return "📊 Business Summary for Today:\n" + objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(result.getData());
             } else {

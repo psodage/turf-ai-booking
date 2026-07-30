@@ -46,6 +46,10 @@ public class PromptManager {
             """;
 
     public String buildSystemPrompt(User user, Business business) {
+        return buildSystemPrompt(user, business, "EN");
+    }
+
+    public String buildSystemPrompt(User user, Business business, String language) {
         StringBuilder sb = new StringBuilder();
         sb.append(BASE_SYSTEM_PROMPT).append("\n");
 
@@ -68,6 +72,10 @@ public class PromptManager {
             sb.append("- Phone: ").append(user.getPhone()).append("\n");
             sb.append("- Role: ").append(user.getRole().name()).append("\n");
         }
+
+        sb.append("PREFERRED RESPONSE LANGUAGE:\n");
+        sb.append("- Language Code: ").append(language != null ? language : "EN").append("\n");
+        sb.append("- REQUIREMENT: Respond naturally in this language while preserving emojis, formatting, and clear structure.\n");
 
         return sb.toString();
     }

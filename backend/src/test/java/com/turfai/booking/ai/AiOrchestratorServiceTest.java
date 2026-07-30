@@ -64,7 +64,9 @@ class AiOrchestratorServiceTest {
                 whatsAppService,
                 conversationService,
                 turfRepository,
-                new ObjectMapper()
+                new ObjectMapper(),
+                new com.turfai.booking.ai.language.LanguageDetector(),
+                new com.turfai.booking.ai.language.MultilingualMessageFormatter()
         );
 
         business = Business.builder().name("Green Pitch Kolhapur").status(BusinessStatus.ACTIVE).timezone("Asia/Kolkata").build();
@@ -83,7 +85,7 @@ class AiOrchestratorServiceTest {
     @Test
     @DisplayName("Should route customer message requesting availability to checkAvailability tool")
     void testProcessCustomerAvailabilityMessage() {
-        when(promptManager.buildSystemPrompt(customerUser, business)).thenReturn("System prompt");
+        when(promptManager.buildSystemPrompt(eq(customerUser), eq(business), any())).thenReturn("System prompt");
         when(conversationContextBuilder.buildMessageHistory(conversation)).thenReturn(List.of(Map.of("role", "user", "content", "Is slot available tomorrow?")));
         when(turfRepository.findByBusinessId(business.getId())).thenReturn(List.of(turf));
         when(aiToolGateway.checkAvailability(eq(turf.getId()), any())).thenReturn(ToolResult.success("Available slots"));
@@ -98,7 +100,7 @@ class AiOrchestratorServiceTest {
     @Test
     @DisplayName("Should route greeting or menu prompt to interactive WhatsApp menu list")
     void testProcessMenuMessage() {
-        when(promptManager.buildSystemPrompt(customerUser, business)).thenReturn("System prompt");
+        when(promptManager.buildSystemPrompt(eq(customerUser), eq(business), any())).thenReturn("System prompt");
         when(conversationContextBuilder.buildMessageHistory(conversation)).thenReturn(List.of(Map.of("role", "user", "content", "Hi")));
 
         aiOrchestratorService.processUserMessage(conversation);
@@ -114,7 +116,7 @@ class AiOrchestratorServiceTest {
         business.setLongitude(74.2179);
         business.setAddress("Near Rankala Lake, Ring Road, Kolhapur");
 
-        when(promptManager.buildSystemPrompt(customerUser, business)).thenReturn("System prompt");
+        when(promptManager.buildSystemPrompt(eq(customerUser), eq(business), any())).thenReturn("System prompt");
         when(conversationContextBuilder.buildMessageHistory(conversation)).thenReturn(List.of(Map.of("role", "user", "content", "Where is your location?")));
         when(aiToolGateway.getLocation(business)).thenReturn(ToolResult.success("Location retrieved", Map.of(
                 "name", business.getName(),
@@ -133,7 +135,7 @@ class AiOrchestratorServiceTest {
     @Test
     @DisplayName("Should route view booking request to getUserBookings tool")
     void testProcessViewBookingMessage() {
-        when(promptManager.buildSystemPrompt(customerUser, business)).thenReturn("System prompt");
+        when(promptManager.buildSystemPrompt(eq(customerUser), eq(business), any())).thenReturn("System prompt");
         when(conversationContextBuilder.buildMessageHistory(conversation)).thenReturn(List.of(Map.of("role", "user", "content", "View my booking")));
         when(aiToolGateway.getUserBookings(customerUser, null)).thenReturn(ToolResult.success("Bookings found", Map.of(
                 "found", true,

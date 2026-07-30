@@ -57,6 +57,10 @@ public class Conversation {
     @Column(name = "current_intent", length = 100)
     private String currentIntent;
 
+    @Builder.Default
+    @Column(name = "preferred_language", length = 20)
+    private String preferredLanguage = "EN";
+
     @NotNull
     @Enumerated(EnumType.STRING)
     @Builder.Default
