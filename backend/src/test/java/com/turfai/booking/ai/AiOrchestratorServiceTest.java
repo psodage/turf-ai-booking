@@ -94,4 +94,63 @@ class AiOrchestratorServiceTest {
         verify(whatsAppService).sendTextMessage(eq("+919876543210"), any());
         verify(conversationService).saveOutgoingMessage(eq(conversation), any(), any());
     }
+
+    @Test
+    @DisplayName("Should route greeting or menu prompt to interactive WhatsApp menu list")
+    void testProcessMenuMessage() {
+        when(promptManager.buildSystemPrompt(customerUser, business)).thenReturn("System prompt");
+        when(conversationContextBuilder.buildMessageHistory(conversation)).thenReturn(List.of(Map.of("role", "user", "content", "Hi")));
+
+        aiOrchestratorService.processUserMessage(conversation);
+
+        verify(whatsAppService).sendListMessage(eq("+919876543210"), eq("👋 Welcome to Green Pitch Kolhapur"), eq("Please select an option below or type your query."), eq("Menu Options"), any());
+        verify(conversationService).saveOutgoingMessage(eq(conversation), any(), any());
+    }
+
+    @Test
+    @DisplayName("Should route location request to location tool and send location message")
+    void testProcessLocationMessage() {
+        business.setLatitude(16.6946);
+        business.setLongitude(74.2179);
+        business.setAddress("Near Rankala Lake, Ring Road, Kolhapur");
+
+        when(promptManager.buildSystemPrompt(customerUser, business)).thenReturn("System prompt");
+        when(conversationContextBuilder.buildMessageHistory(conversation)).thenReturn(List.of(Map.of("role", "user", "content", "Where is your location?")));
+        when(aiToolGateway.getLocation(business)).thenReturn(ToolResult.success("Location retrieved", Map.of(
+                "name", business.getName(),
+                "address", business.getAddress(),
+                "latitude", business.getLatitude(),
+                "longitude", business.getLongitude(),
+                "has_native_location", true
+        )));
+
+        aiOrchestratorService.processUserMessage(conversation);
+
+        verify(whatsAppService).sendLocationMessage(eq("+919876543210"), eq(16.6946), eq(74.2179), eq("Green Pitch Kolhapur"), eq("Near Rankala Lake, Ring Road, Kolhapur"));
+        verify(conversationService).saveOutgoingMessage(eq(conversation), any(), any());
+    }
+
+    @Test
+    @DisplayName("Should route view booking request to getUserBookings tool")
+    void testProcessViewBookingMessage() {
+        when(promptManager.buildSystemPrompt(customerUser, business)).thenReturn("System prompt");
+        when(conversationContextBuilder.buildMessageHistory(conversation)).thenReturn(List.of(Map.of("role", "user", "content", "View my booking")));
+        when(aiToolGateway.getUserBookings(customerUser, null)).thenReturn(ToolResult.success("Bookings found", Map.of(
+                "found", true,
+                "count", 1,
+                "bookings", List.of(Map.of(
+                        "booking_id", "BK-2026-00001",
+                        "date", "2026-08-01",
+                        "time_slot", "18:00 - 19:00",
+                        "turf_name", "Green Pitch Main Turf",
+                        "status", "CONFIRMED",
+                        "amount_paid", 800
+                ))
+        )));
+
+        aiOrchestratorService.processUserMessage(conversation);
+
+        verify(whatsAppService).sendTextMessage(eq("+919876543210"), any());
+        verify(conversationService).saveOutgoingMessage(eq(conversation), any(), any());
+    }
 }

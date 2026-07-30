@@ -10,7 +10,9 @@ import com.turfai.booking.dto.response.BookingResponse;
 import com.turfai.booking.dto.response.DaySlotsResponse;
 import com.turfai.booking.entity.BlockReason;
 import com.turfai.booking.entity.Booking;
+import com.turfai.booking.entity.Business;
 import com.turfai.booking.entity.PricingRule;
+import com.turfai.booking.entity.User;
 import com.turfai.booking.exception.BaseException;
 import com.turfai.booking.repository.BookingRepository;
 import com.turfai.booking.service.BlockedSlotService;
@@ -48,6 +50,81 @@ public class AiToolGateway {
     private final PaymentService paymentService;
     private final ReportService reportService;
     private final WhatsAppService whatsAppService;
+
+    // getLocation
+    public ToolResult getLocation(Business business) {
+        try {
+            if (business == null) {
+                return ToolResult.error("BUSINESS_NOT_FOUND", "Business information is not available.", null);
+            }
+            Map<String, Object> data = new HashMap<>();
+            data.put("name", business.getName());
+            data.put("address", business.getAddress() != null ? business.getAddress() : "Near Rankala Lake, Ring Road, Kolhapur, Maharashtra (416012)");
+            data.put("google_maps_link", business.getGoogleMapsLink());
+            if (business.getLatitude() != null && business.getLongitude() != null) {
+                data.put("latitude", business.getLatitude());
+                data.put("longitude", business.getLongitude());
+                data.put("has_native_location", true);
+            } else {
+                data.put("has_native_location", false);
+            }
+            return ToolResult.success("Location retrieved successfully.", data);
+        } catch (Exception ex) {
+            log.error("Error in getLocation tool", ex);
+            return ToolResult.error("INTERNAL_ERROR", "Failed to retrieve location.", null);
+        }
+    }
+
+    // getUserBookings
+    public ToolResult getUserBookings(User customer, String inputPhone) {
+        try {
+            List<Booking> bookings = List.of();
+            String searchPhone = inputPhone;
+
+            if (searchPhone != null && !searchPhone.isBlank()) {
+                String altPhone = searchPhone.startsWith("+") ? searchPhone.substring(1) : "+" + searchPhone;
+                bookings = bookingRepository.findByCustomerPhoneWithDetails(searchPhone, altPhone);
+            }
+
+            if (bookings.isEmpty() && customer != null && customer.getId() != null) {
+                bookings = bookingRepository.findByCustomerIdWithDetails(customer.getId());
+            }
+
+            if (bookings.isEmpty() && customer != null && customer.getPhone() != null) {
+                String phone = customer.getPhone();
+                String altPhone = phone.startsWith("+") ? phone.substring(1) : "+" + phone;
+                bookings = bookingRepository.findByCustomerPhoneWithDetails(phone, altPhone);
+            }
+
+            if (bookings.isEmpty()) {
+                Map<String, Object> emptyData = new HashMap<>();
+                emptyData.put("found", false);
+                emptyData.put("bookings", List.of());
+                return ToolResult.success("No bookings found.", emptyData);
+            }
+
+            List<Map<String, Object>> bookingList = bookings.stream().map(b -> {
+                Map<String, Object> m = new HashMap<>();
+                m.put("booking_id", b.getBookingNumber());
+                m.put("date", b.getBookingDate().toString());
+                m.put("time_slot", b.getStartTime() + " - " + b.getEndTime());
+                m.put("turf_name", b.getTurf() != null ? b.getTurf().getName() : "Green Pitch Turf");
+                m.put("status", b.getStatus().name());
+                m.put("amount_paid", b.getPrice());
+                return m;
+            }).collect(Collectors.toList());
+
+            Map<String, Object> resultData = new HashMap<>();
+            resultData.put("found", true);
+            resultData.put("count", bookingList.size());
+            resultData.put("bookings", bookingList);
+
+            return ToolResult.success("Bookings retrieved successfully.", resultData);
+        } catch (Exception ex) {
+            log.error("Error in getUserBookings tool", ex);
+            return ToolResult.error("INTERNAL_ERROR", "Failed to retrieve booking details.", null);
+        }
+    }
 
     // 1. checkAvailability
     public ToolResult checkAvailability(UUID turfId, LocalDate date) {

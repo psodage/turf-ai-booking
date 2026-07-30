@@ -60,8 +60,17 @@ public class WhatsAppService {
     }
 
     public boolean sendListMessage(String toPhone, String bodyText, String buttonText, List<OutboundSection> sections) {
+        return sendListMessage(toPhone, null, bodyText, buttonText, sections);
+    }
+
+    public boolean sendListMessage(String toPhone, String headerText, String bodyText, String buttonText, List<OutboundSection> sections) {
         Map<String, Object> interactive = new HashMap<>();
         interactive.put("type", "list");
+
+        if (headerText != null && !headerText.isBlank()) {
+            interactive.put("header", Map.of("type", "text", "text", headerText));
+        }
+
         interactive.put("body", Map.of("text", bodyText));
 
         List<Map<String, Object>> sectionList = new ArrayList<>();
@@ -86,6 +95,26 @@ public class WhatsAppService {
         body.put("to", sanitizePhone(toPhone));
         body.put("type", "interactive");
         body.put("interactive", interactive);
+
+        return executeOutboundPost(body);
+    }
+
+    public boolean sendLocationMessage(String toPhone, double latitude, double longitude, String name, String address) {
+        Map<String, Object> location = new HashMap<>();
+        location.put("latitude", latitude);
+        location.put("longitude", longitude);
+        if (name != null && !name.isBlank()) {
+            location.put("name", name);
+        }
+        if (address != null && !address.isBlank()) {
+            location.put("address", address);
+        }
+
+        Map<String, Object> body = new HashMap<>();
+        body.put("messaging_product", "whatsapp");
+        body.put("to", sanitizePhone(toPhone));
+        body.put("type", "location");
+        body.put("location", location);
 
         return executeOutboundPost(body);
     }

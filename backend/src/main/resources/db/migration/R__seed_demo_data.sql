@@ -22,7 +22,7 @@ DELETE FROM users WHERE business_id = '11111111-1111-1111-1111-111111111111';
 DELETE FROM business WHERE id = '11111111-1111-1111-1111-111111111111';
 
 -- 1. Insert Business
-INSERT INTO business (id, name, address, city, state, pincode, google_maps_link, phone, whatsapp_phone_number_id, timezone, status)
+INSERT INTO business (id, name, address, city, state, pincode, google_maps_link, phone, whatsapp_phone_number_id, timezone, status, latitude, longitude)
 VALUES (
     '11111111-1111-1111-1111-111111111111',
     'Green Pitch Kolhapur',
@@ -34,7 +34,9 @@ VALUES (
     '+919876543210',
     '1174774225727644',
     'Asia/Kolkata',
-    'ACTIVE'
+    'ACTIVE',
+    16.6946,
+    74.2179
 );
 
 -- 2. Insert Owner User

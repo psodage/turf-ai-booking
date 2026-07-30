@@ -27,11 +27,17 @@ public interface BookingRepository extends JpaRepository<Booking, UUID> {
     List<Booking> findByTurfIdAndBookingDateAndStatusIn(UUID turfId, LocalDate bookingDate, Collection<BookingStatus> statuses);
 
     /**
-     * Finds bookings for a customer.
+     * Finds bookings for a customer sorted by date and start time descending.
      */
     List<Booking> findByCustomerId(UUID customerId);
 
     List<Booking> findByCustomerIdAndStatus(UUID customerId, BookingStatus status);
+
+    @Query("SELECT b FROM Booking b JOIN FETCH b.turf JOIN FETCH b.customer JOIN FETCH b.business WHERE b.customer.id = :customerId ORDER BY b.bookingDate DESC, b.startTime DESC")
+    List<Booking> findByCustomerIdWithDetails(@Param("customerId") UUID customerId);
+
+    @Query("SELECT b FROM Booking b JOIN FETCH b.turf JOIN FETCH b.customer JOIN FETCH b.business WHERE b.customer.phone = :phone OR b.customer.phone = :altPhone ORDER BY b.bookingDate DESC, b.startTime DESC")
+    List<Booking> findByCustomerPhoneWithDetails(@Param("phone") String phone, @Param("altPhone") String altPhone);
 
     /**
      * Business bookings for dashboard/owner view on a specific date.

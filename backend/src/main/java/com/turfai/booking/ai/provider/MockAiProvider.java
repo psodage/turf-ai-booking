@@ -21,6 +21,35 @@ public class MockAiProvider implements AiProvider {
             lastMessage = request.getMessages().get(request.getMessages().size() - 1).getOrDefault("content", "").toLowerCase();
         }
 
+        // View Booking intent (or phone number input for lookup)
+        if (lastMessage.contains("view my booking") || lastMessage.contains("my booking") || lastMessage.contains("view_booking") 
+                || lastMessage.contains("view booking") || lastMessage.contains("my bookings") || lastMessage.matches(".*\\b[0-9]{10}\\b.*")) {
+            String extractedPhone = "";
+            java.util.regex.Matcher matcher = java.util.regex.Pattern.compile("\\b[0-9]{10}\\b").matcher(lastMessage);
+            if (matcher.find()) {
+                extractedPhone = matcher.group();
+            }
+            Map<String, Object> args = extractedPhone.isEmpty() ? Map.of() : Map.of("phone", extractedPhone);
+            return AiResponse.builder()
+                    .isToolCall(true)
+                    .toolName("getUserBookings")
+                    .toolArguments(args)
+                    .promptTokens(100)
+                    .completionTokens(40)
+                    .build();
+        }
+
+        // Location & Map intent
+        if (lastMessage.contains("location") || lastMessage.contains("address") || lastMessage.contains("map") || lastMessage.contains("where") || lastMessage.contains("location_map")) {
+            return AiResponse.builder()
+                    .isToolCall(true)
+                    .toolName("getLocation")
+                    .toolArguments(Map.of())
+                    .promptTokens(90)
+                    .completionTokens(35)
+                    .build();
+        }
+
         if (lastMessage.contains("hold") || lastMessage.contains("6 to 7") || lastMessage.contains("6:00") || lastMessage.contains("06:00")
                 || lastMessage.contains("7 to 8") || lastMessage.contains("07:00") || lastMessage.contains("first") || lastMessage.contains("second")) {
             return AiResponse.builder()
@@ -38,7 +67,7 @@ public class MockAiProvider implements AiProvider {
 
         if (lastMessage.contains("availability") || lastMessage.contains("slot") || lastMessage.contains("available") 
                 || lastMessage.contains("book") || lastMessage.contains("reserve") || lastMessage.contains("turf")
-                || lastMessage.contains("time") || lastMessage.contains("play")) {
+                || lastMessage.contains("time") || lastMessage.contains("play") || lastMessage.contains("check_availability")) {
             return AiResponse.builder()
                     .isToolCall(true)
                     .toolName("checkAvailability")
@@ -48,21 +77,12 @@ public class MockAiProvider implements AiProvider {
                     .build();
         }
 
-        if (lastMessage.contains("price") || lastMessage.contains("rate") || lastMessage.contains("cost") || lastMessage.contains("charge")) {
+        if (lastMessage.contains("price") || lastMessage.contains("rate") || lastMessage.contains("cost") || lastMessage.contains("charge") || lastMessage.contains("pricing")) {
             return AiResponse.builder()
                     .isToolCall(false)
                     .content("⚽ *Green Pitch Kolhapur Pricing:*\n\n• Standard Hours (6 AM - 5 PM): ₹800/hr\n• Peak Hours (5 PM - 11 PM): ₹1,000/hr\n\nReply with your preferred date & time to check available slots!")
                     .promptTokens(90)
                     .completionTokens(40)
-                    .build();
-        }
-
-        if (lastMessage.contains("location") || lastMessage.contains("address") || lastMessage.contains("map") || lastMessage.contains("where")) {
-            return AiResponse.builder()
-                    .isToolCall(false)
-                    .content("📍 *Green Pitch Kolhapur*\nAddress: Near Rankala Lake, Ring Road, Kolhapur, Maharashtra (416012)\nGoogle Maps: https://maps.google.com/?q=Rankala+Kolhapur")
-                    .promptTokens(90)
-                    .completionTokens(35)
                     .build();
         }
 
@@ -86,10 +106,11 @@ public class MockAiProvider implements AiProvider {
                     .build();
         }
 
-        // Standard text response for greetings
+        // Return tool call for interactive menu display
         return AiResponse.builder()
-                .isToolCall(false)
-                .content("👋 Hello! Welcome to Green Pitch Kolhapur.\n\nYou can ask me:\n1. 📅 *Check availability* (e.g., 'book slot for tomorrow')\n2. 💰 *Check pricing* (e.g., 'what are the rates?')\n3. 📍 *Location & Map*\n4. ❌ *Cancel booking*")
+                .isToolCall(true)
+                .toolName("showMenu")
+                .toolArguments(Map.of())
                 .promptTokens(85)
                 .completionTokens(40)
                 .build();

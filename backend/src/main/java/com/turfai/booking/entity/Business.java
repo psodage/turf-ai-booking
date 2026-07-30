@@ -50,6 +50,12 @@ public class Business extends BaseEntity {
     @Column(name = "phone", length = 20)
     private String phone;
 
+    @Column(name = "latitude")
+    private Double latitude;
+
+    @Column(name = "longitude")
+    private Double longitude;
+
     @NotBlank
     @Column(name = "whatsapp_phone_number_id", nullable = false, unique = true, length = 100)
     private String whatsappPhoneNumberId;
