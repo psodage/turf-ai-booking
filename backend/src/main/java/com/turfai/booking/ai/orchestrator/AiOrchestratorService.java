@@ -170,15 +170,18 @@ public class AiOrchestratorService {
     }
 
     private ToolResult executeToolCall(String toolName, Map<String, Object> args, Conversation conversation) {
-        UUID defaultTurfId = getDefaultTurfId(conversation);
+        UUID defaultTurfId = parseUuidArg(args != null ? args.get("turfId") : null, getDefaultTurfId(conversation));
+        LocalDate date = parseDateArg(args != null ? args.get("date") : null, LocalDate.now().plusDays(1));
+        LocalTime startTime = parseTimeArg(args != null ? args.get("startTime") : null, LocalTime.of(18, 0));
+        LocalTime endTime = parseTimeArg(args != null ? args.get("endTime") : null, startTime.plusHours(1));
 
         switch (toolName) {
             case "checkAvailability":
-                return aiToolGateway.checkAvailability(defaultTurfId, LocalDate.now().plusDays(1));
+                return aiToolGateway.checkAvailability(defaultTurfId, date);
             case "getPricing":
-                return aiToolGateway.getPricing(defaultTurfId, LocalDate.now().plusDays(1), LocalTime.of(18, 0), LocalTime.of(19, 0));
+                return aiToolGateway.getPricing(defaultTurfId, date, startTime, endTime);
             case "createBookingHold":
-                return aiToolGateway.createBookingHold(defaultTurfId, conversation.getUser().getId(), LocalDate.now().plusDays(1), LocalTime.of(18, 0), LocalTime.of(19, 0));
+                return aiToolGateway.createBookingHold(defaultTurfId, conversation.getUser().getId(), date, startTime, endTime);
             case "confirmBooking":
                 return aiToolGateway.confirmBooking(UUID.randomUUID(), "PAY_DEMO_001");
             case "cancelBooking":
@@ -189,6 +192,38 @@ public class AiOrchestratorService {
                 return aiToolGateway.getBusinessSummary(conversation.getBusiness().getId(), LocalDate.now());
             default:
                 return ToolResult.error("UNKNOWN_TOOL", "Requested tool is not supported.", null);
+        }
+    }
+
+    private LocalDate parseDateArg(Object val, LocalDate fallback) {
+        if (val == null) return fallback;
+        try {
+            String s = String.valueOf(val).trim();
+            if ("today".equalsIgnoreCase(s)) return LocalDate.now();
+            if ("tomorrow".equalsIgnoreCase(s)) return LocalDate.now().plusDays(1);
+            return LocalDate.parse(s);
+        } catch (Exception e) {
+            return fallback;
+        }
+    }
+
+    private LocalTime parseTimeArg(Object val, LocalTime fallback) {
+        if (val == null) return fallback;
+        try {
+            String s = String.valueOf(val).trim();
+            if (s.length() == 5) s += ":00";
+            return LocalTime.parse(s);
+        } catch (Exception e) {
+            return fallback;
+        }
+    }
+
+    private UUID parseUuidArg(Object val, UUID fallback) {
+        if (val == null) return fallback;
+        try {
+            return UUID.fromString(String.valueOf(val).trim());
+        } catch (Exception e) {
+            return fallback;
         }
     }
 

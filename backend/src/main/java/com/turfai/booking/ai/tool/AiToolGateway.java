@@ -199,7 +199,7 @@ public class AiToolGateway {
             return ToolResult.error(ex.getErrorCode().name(), ex.getMessage(), altSuggestions);
         } catch (Exception ex) {
             log.error("Error in createBookingHold tool", ex);
-            return ToolResult.error("HOLD_FAILED", "Could not create booking hold.", null);
+            return ToolResult.error("HOLD_FAILED", "Could not create booking hold: " + (ex.getMessage() != null ? ex.getMessage() : "Internal error"), null);
         }
     }
 

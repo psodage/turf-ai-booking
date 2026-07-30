@@ -103,9 +103,56 @@ public class BookingService {
         }
 
         // Check for existing active bookings / holds
+        Instant nowUtcCheck = Instant.now();
         List<Booking> activeBookings = bookingRepository.findByTurfIdAndBookingDateAndStatusIn(
                 turf.getId(), request.getBookingDate(), Set.of(BookingStatus.HOLD, BookingStatus.PAYMENT_PENDING, BookingStatus.CONFIRMED));
-        boolean isAlreadyBooked = activeBookings.stream()
+
+        List<Booking> trulyActiveBookings = activeBookings.stream()
+                .filter(b -> {
+                    if (b.getStatus() == BookingStatus.CONFIRMED) {
+                        return true;
+                    }
+                    Optional<BookingHold> holdOpt = bookingHoldRepository.findByBookingId(b.getId());
+                    if (holdOpt.isPresent()) {
+                        BookingHold h = holdOpt.get();
+                        if (h.getStatus() == HoldStatus.ACTIVE && h.getExpiresAt().isBefore(nowUtcCheck)) {
+                            h.setStatus(HoldStatus.EXPIRED);
+                            bookingHoldRepository.save(h);
+                            b.setStatus(BookingStatus.EXPIRED);
+                            bookingRepository.save(b);
+                            return false;
+                        }
+                        return h.getStatus() == HoldStatus.ACTIVE;
+                    }
+                    return true;
+                })
+                .toList();
+
+        // Re-use active hold if customer asks for the same slot again
+        Optional<Booking> sameCustomerHold = trulyActiveBookings.stream()
+                .filter(b -> b.getCustomer().getId().equals(request.getCustomerId())
+                        && (b.getStatus() == BookingStatus.HOLD || b.getStatus() == BookingStatus.PAYMENT_PENDING)
+                        && slotService.timesOverlap(request.getStartTime(), request.getEndTime(), b.getStartTime(), b.getEndTime()))
+                .findFirst();
+
+        if (sameCustomerHold.isPresent()) {
+            Booking existing = sameCustomerHold.get();
+            Optional<BookingHold> hOpt = bookingHoldRepository.findByBookingId(existing.getId());
+            if (hOpt.isPresent() && hOpt.get().getStatus() == HoldStatus.ACTIVE) {
+                BookingHold existingHold = hOpt.get();
+                log.info("Returning existing active booking hold for customer {} and booking {}", request.getCustomerId(), existing.getBookingNumber());
+                return BookingHoldResponse.builder()
+                        .holdId(existingHold.getId())
+                        .bookingId(existing.getId())
+                        .bookingNumber(existing.getBookingNumber())
+                        .price(existing.getPrice())
+                        .expiresAt(existingHold.getExpiresAt())
+                        .status(existingHold.getStatus())
+                        .build();
+            }
+        }
+
+        boolean isAlreadyBooked = trulyActiveBookings.stream()
                 .anyMatch(b -> slotService.timesOverlap(request.getStartTime(), request.getEndTime(), b.getStartTime(), b.getEndTime()));
         if (isAlreadyBooked) {
             throw new SlotUnavailableException("Requested time slot is already booked or on hold.");
