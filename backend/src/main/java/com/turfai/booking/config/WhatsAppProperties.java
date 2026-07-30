@@ -13,6 +13,6 @@ public class WhatsAppProperties {
     private String phoneNumberId;
     private String businessAccountId;
     private String accessToken;
-    private String verifyToken = "turfai_verify_token_dev";
+    private String verifyToken = "turfai_verify_token";
     private String appSecret = "turfai_app_secret_dev";
 }
