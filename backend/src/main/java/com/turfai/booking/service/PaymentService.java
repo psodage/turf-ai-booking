@@ -30,6 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
+import java.time.Instant;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.util.List;
@@ -42,6 +43,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class PaymentService {
 
+    public static final int PAYMENT_TIMEOUT_MINUTES = 5;
     private static final String HMAC_SHA256_ALGORITHM = "HmacSHA256";
 
     private final RazorpayProperties razorpayProperties;
@@ -76,12 +78,15 @@ public class PaymentService {
         String customerName = booking.getCustomer().getName();
         String customerPhone = booking.getCustomer().getPhone();
 
+        long expireByEpochSecond = Instant.now().getEpochSecond() + (PAYMENT_TIMEOUT_MINUTES * 60);
+
         PaymentLinkDto linkDto = razorpayClientWrapper.createPaymentLink(
                 booking.getPrice(),
                 description,
                 customerName,
                 customerPhone,
-                booking.getBookingNumber()
+                booking.getBookingNumber(),
+                expireByEpochSecond
         );
 
         Payment payment = Payment.builder()

@@ -54,7 +54,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class BookingService {
 
-    public static final int HOLD_DURATION_MINUTES = 10;
+    public static final double HOLD_DURATION_MINUTES = 7.5;
     public static final int CANCELLATION_WINDOW_HOURS = 2;
     public static final int PAYMENT_GRACE_PERIOD_SECONDS = 60;
 
@@ -123,7 +123,7 @@ public class BookingService {
 
         // 6. Build & Save Booking & BookingHold
         Instant nowUtc = Instant.now();
-        Instant expiresAtUtc = nowUtc.plus(Duration.ofMinutes(HOLD_DURATION_MINUTES));
+        Instant expiresAtUtc = nowUtc.plus(Duration.ofSeconds((long) (HOLD_DURATION_MINUTES * 60)));
 
         Booking booking = Booking.builder()
                 .bookingNumber(bookingNumber)

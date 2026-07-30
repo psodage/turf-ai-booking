@@ -39,7 +39,7 @@ class ConversationContextBuilderTest {
     void setUp() {
         aiProperties = new AiProperties();
         aiProperties.setMaxContextMessages(10);
-        aiProperties.setSessionTimeoutMinutes(30);
+        aiProperties.setSessionTimeoutMinutes(10);
 
         conversationContextBuilder = new ConversationContextBuilder(aiProperties, conversationMessageRepository, conversationRepository);
     }
@@ -68,9 +68,9 @@ class ConversationContextBuilderTest {
     }
 
     @Test
-    @DisplayName("Should mark conversation expired if inactive for more than 30 minutes")
+    @DisplayName("Should mark conversation expired if inactive for more than 10 minutes")
     void testSessionTimeoutExpiry() {
-        Instant oldActivity = Instant.now().minus(35, ChronoUnit.MINUTES);
+        Instant oldActivity = Instant.now().minus(15, ChronoUnit.MINUTES);
         Conversation conv = Conversation.builder().id(UUID.randomUUID()).status(ConversationStatus.ACTIVE).lastActivity(oldActivity).build();
 
         List<Map<String, String>> history = conversationContextBuilder.buildMessageHistory(conv);

@@ -35,6 +35,7 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -107,7 +108,7 @@ class PaymentServiceTest {
                 .status("created")
                 .build();
 
-        when(razorpayClientWrapper.createPaymentLink(any(), any(), any(), any(), any())).thenReturn(mockLink);
+        when(razorpayClientWrapper.createPaymentLink(any(), any(), any(), any(), any(), anyLong())).thenReturn(mockLink);
         when(paymentRepository.save(any())).thenAnswer(invocation -> {
             Payment p = invocation.getArgument(0);
             p.setId(UUID.randomUUID());
@@ -142,7 +143,7 @@ class PaymentServiceTest {
         PaymentResponse response = paymentService.createPaymentLink(req);
 
         assertThat(response).isNotNull();
-        verify(razorpayClientWrapper, never()).createPaymentLink(any(), any(), any(), any(), any());
+        verify(razorpayClientWrapper, never()).createPaymentLink(any(), any(), any(), any(), any(), anyLong());
     }
 
     @Test

@@ -94,7 +94,7 @@ VALUES
 -- 6. Insert System Settings
 INSERT INTO system_setting (setting_key, setting_value, description)
 VALUES
-    ('HOLD_DURATION_MINUTES', '10', 'Booking hold duration before expiration'),
+    ('HOLD_DURATION_MINUTES', '7.5', 'Booking hold duration before expiration'),
     ('CANCELLATION_WINDOW_HOURS', '2', 'Minimum lead time required before slot start time for customer cancellation'),
     ('ADVANCE_BOOKING_DAYS', '30', 'Maximum days in advance a customer can book a slot'),
     ('BUSINESS_DEFAULT_TIMEZONE', 'Asia/Kolkata', 'System default business timezone');

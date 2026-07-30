@@ -67,7 +67,7 @@ class FlywayMigrationTest {
 
         // Verify System Settings seed
         assertThat(systemSettingRepository.findById("HOLD_DURATION_MINUTES")).isPresent();
-        assertThat(systemSettingRepository.findById("HOLD_DURATION_MINUTES").get().getValue()).isEqualTo("10");
+        assertThat(systemSettingRepository.findById("HOLD_DURATION_MINUTES").get().getValue()).isEqualTo("7.5");
         assertThat(systemSettingRepository.findById("CANCELLATION_WINDOW_HOURS").get().getValue()).isEqualTo("2");
     }
 }

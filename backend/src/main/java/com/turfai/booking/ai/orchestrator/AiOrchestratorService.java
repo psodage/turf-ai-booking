@@ -130,10 +130,10 @@ public class AiOrchestratorService {
                 sb.append("• *Booking Ref:* ").append(bookingRef).append("\n");
                 sb.append("• *Slot:* Tomorrow 06:00 PM - 07:00 PM\n");
                 sb.append("• *Amount Payable:* ₹").append(price).append("\n");
-                sb.append("• *Hold Duration:* 10 Minutes\n\n");
+                sb.append("• *Hold Duration:* 7.5 Minutes\n\n");
                 sb.append("💳 *Click Link to Pay & Confirm:* \n");
                 sb.append(paymentUrl).append("\n\n");
-                sb.append("*(Complete payment within 10 mins via UPI / Card / NetBanking to lock your slot!)*");
+                sb.append("*(Complete payment within 5 mins via UPI / Card / NetBanking to lock your slot!)*");
                 return sb.toString();
             } else if ("getTodayBookings".equals(toolName) || "getBusinessSummary".equals(toolName)) {
                 return "📊 Business Summary for Today:\n" + objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(result.getData());

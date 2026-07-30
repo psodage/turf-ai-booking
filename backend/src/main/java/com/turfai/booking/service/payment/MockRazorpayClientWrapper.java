@@ -13,11 +13,11 @@ import java.util.UUID;
 public class MockRazorpayClientWrapper implements RazorpayClientWrapper {
 
     @Override
-    public PaymentLinkDto createPaymentLink(BigDecimal amount, String description, String customerName, String customerPhone, String bookingNumber) {
+    public PaymentLinkDto createPaymentLink(BigDecimal amount, String description, String customerName, String customerPhone, String bookingNumber, long expireByEpochSecond) {
         String mockLinkId = "plink_" + UUID.randomUUID().toString().replace("-", "").substring(0, 14);
         String mockUrl = "https://rzp.io/i/" + mockLinkId;
 
-        log.info("Mock Razorpay Payment Link created: id={}, amount={}, url={}", mockLinkId, amount, mockUrl);
+        log.info("Mock Razorpay Payment Link created: id={}, amount={}, url={}, expireBy={}", mockLinkId, amount, mockUrl, expireByEpochSecond);
 
         return PaymentLinkDto.builder()
                 .linkId(mockLinkId)

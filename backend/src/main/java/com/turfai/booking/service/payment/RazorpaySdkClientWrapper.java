@@ -26,7 +26,7 @@ public class RazorpaySdkClientWrapper implements RazorpayClientWrapper {
 
     @Override
     @SuppressWarnings("unchecked")
-    public PaymentLinkDto createPaymentLink(BigDecimal amount, String description, String customerName, String customerPhone, String bookingNumber) {
+    public PaymentLinkDto createPaymentLink(BigDecimal amount, String description, String customerName, String customerPhone, String bookingNumber, long expireByEpochSecond) {
         String url = "https://api.razorpay.com/v1/payment_links";
 
         Map<String, Object> body = new HashMap<>();
@@ -34,6 +34,7 @@ public class RazorpaySdkClientWrapper implements RazorpayClientWrapper {
         body.put("currency", "INR");
         body.put("accept_partial", false);
         body.put("description", description);
+        body.put("expire_by", expireByEpochSecond);
 
         Map<String, Object> customer = new HashMap<>();
         customer.put("name", customerName);

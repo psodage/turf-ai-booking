@@ -184,7 +184,7 @@ class RepositoryCustomQueryTest {
     void testFindBySettingKey() {
         Optional<SystemSetting> settingOpt = systemSettingRepository.findById("HOLD_DURATION_MINUTES");
         assertThat(settingOpt).isPresent();
-        assertThat(settingOpt.get().getValue()).isEqualTo("10");
+        assertThat(settingOpt.get().getValue()).isEqualTo("7.5");
     }
 
     @Test

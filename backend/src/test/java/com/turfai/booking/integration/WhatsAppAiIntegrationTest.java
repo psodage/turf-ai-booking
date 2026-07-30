@@ -266,7 +266,7 @@ class WhatsAppAiIntegrationTest {
     }
 
     @Test
-    @DisplayName("7. Session Timeout: Inactive session beyond 30 minutes should expire")
+    @DisplayName("7. Session Timeout: Inactive session beyond 10 minutes should expire")
     void testSessionTimeout() {
         User customer = userRepository.saveAndFlush(User.builder()
                 .business(testBusiness)
@@ -277,7 +277,7 @@ class WhatsAppAiIntegrationTest {
                 .build());
 
         Conversation conv = conversationService.getOrCreateActiveConversation(customer, testBusiness);
-        conv.setLastActivity(Instant.now().minusSeconds(1900)); // 31.6 mins ago
+        conv.setLastActivity(Instant.now().minusSeconds(650)); // 10.8 mins ago
         conversationRepository.saveAndFlush(conv);
 
         List<Map<String, String>> history = conversationContextBuilder.buildMessageHistory(conv);

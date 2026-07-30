@@ -112,7 +112,7 @@ public class AiToolGateway {
             data.put("price", hold.getPrice());
             data.put("payment_url", paymentResp.getPaymentUrl());
 
-            return ToolResult.success("Booking hold created! Complete payment within 10 minutes to confirm your booking.", data);
+            return ToolResult.success("Booking hold created! Complete payment within 5 minutes to confirm your booking.", data);
         } catch (BaseException ex) {
             AlternativeSlotsResponse alts = bookingService.suggestAlternativeSlots(turfId, date);
             List<String> altSuggestions = (alts != null && alts.getSuggestedSlots() != null)

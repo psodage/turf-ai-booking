@@ -271,7 +271,7 @@ Messages older than 10 are dropped from context. The conversation's `current_int
 |---------|--------|
 | Max conversation turns per session | 20 |
 | Max tokens per AI call | 2000 |
-| Conversation timeout (inactivity) | 30 minutes |
+| Conversation timeout (inactivity) | 10 minutes |
 | Context window | Last 10 messages |
 
 Token usage per conversation should be logged for cost monitoring.

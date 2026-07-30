@@ -15,6 +15,6 @@ public class AiProperties {
     private String apiUrl = "https://api.openai.com/v1/chat/completions";
     private int maxTokens = 2000;
     private int maxContextMessages = 10;
-    private int sessionTimeoutMinutes = 30;
+    private int sessionTimeoutMinutes = 10;
     private int maxTurnsPerSession = 20;
 }

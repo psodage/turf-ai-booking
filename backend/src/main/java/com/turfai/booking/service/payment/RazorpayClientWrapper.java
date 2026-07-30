@@ -3,6 +3,6 @@ package com.turfai.booking.service.payment;
 import java.math.BigDecimal;
 
 public interface RazorpayClientWrapper {
-    PaymentLinkDto createPaymentLink(BigDecimal amount, String description, String customerName, String customerPhone, String bookingNumber);
+    PaymentLinkDto createPaymentLink(BigDecimal amount, String description, String customerName, String customerPhone, String bookingNumber, long expireByEpochSecond);
     RefundResultDto initiateRefund(String paymentId, BigDecimal amount, String reason);
 }

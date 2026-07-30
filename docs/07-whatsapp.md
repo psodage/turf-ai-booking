@@ -780,7 +780,7 @@ Inactive conversations expire.
 
 Default:
 
-30 minutes
+10 minutes
 
 Context removed.
 
