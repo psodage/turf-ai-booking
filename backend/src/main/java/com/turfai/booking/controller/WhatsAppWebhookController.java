@@ -32,21 +32,24 @@ public class WhatsAppWebhookController {
     private final WhatsAppWebhookProcessor whatsAppWebhookProcessor;
     private final ObjectMapper objectMapper;
 
-    @GetMapping
+    @GetMapping(produces = MediaType.TEXT_PLAIN_VALUE)
     @Operation(summary = "Meta Webhook Verification Handshake (GET)")
     public ResponseEntity<String> verifyWebhook(
             @RequestParam(name = "hub.mode", required = false) String mode,
             @RequestParam(name = "hub.verify_token", required = false) String verifyToken,
             @RequestParam(name = "hub.challenge", required = false) String challenge) {
 
-        // Log only non-sensitive metadata (hub.verify_token must never be logged)
-        log.info("Received WhatsApp webhook GET verification request. mode={}", mode);
+        String expectedToken = whatsappProperties.getVerifyToken();
+        log.info("Received WhatsApp webhook GET verification request. mode={}, verifyToken={}, expectedToken={}", mode, verifyToken, expectedToken);
 
-        if ("subscribe".equals(mode) && whatsappProperties.getVerifyToken().equals(verifyToken)) {
+        boolean isModeValid = "subscribe".equals(mode);
+        boolean isTokenValid = expectedToken != null && verifyToken != null && expectedToken.trim().equalsIgnoreCase(verifyToken.trim());
+
+        if (isModeValid && isTokenValid) {
             log.info("WhatsApp webhook GET verification succeeded!");
-            return ResponseEntity.ok(challenge);
+            return ResponseEntity.ok(challenge != null ? challenge : "");
         } else {
-            log.warn("WhatsApp webhook GET verification failed. Token mismatch or invalid mode.");
+            log.warn("WhatsApp webhook GET verification failed. Expected token='{}', Received token='{}', Mode='{}'", expectedToken, verifyToken, mode);
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Verification failed");
         }
     }
