@@ -128,11 +128,12 @@ public class BookingService {
                 })
                 .toList();
 
-        // Re-use active hold if customer asks for the same slot again
+        // Re-use active hold if customer asks for the exact same slot again
         Optional<Booking> sameCustomerHold = trulyActiveBookings.stream()
                 .filter(b -> b.getCustomer().getId().equals(request.getCustomerId())
                         && (b.getStatus() == BookingStatus.HOLD || b.getStatus() == BookingStatus.PAYMENT_PENDING)
-                        && slotService.timesOverlap(request.getStartTime(), request.getEndTime(), b.getStartTime(), b.getEndTime()))
+                        && b.getStartTime().equals(request.getStartTime())
+                        && b.getEndTime().equals(request.getEndTime()))
                 .findFirst();
 
         if (sameCustomerHold.isPresent()) {
