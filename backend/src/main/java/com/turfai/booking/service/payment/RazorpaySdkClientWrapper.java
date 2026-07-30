@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,12 +30,17 @@ public class RazorpaySdkClientWrapper implements RazorpayClientWrapper {
     public PaymentLinkDto createPaymentLink(BigDecimal amount, String description, String customerName, String customerPhone, String bookingNumber, long expireByEpochSecond) {
         String url = "https://api.razorpay.com/v1/payment_links";
 
+        // Razorpay API requirement: expire_by timestamp must be at least 15 minutes in the future.
+        // We enforce a minimum threshold of 16 minutes (960 seconds) to account for network latency and clock drift.
+        long minAllowedExpireBy = Instant.now().getEpochSecond() + (16 * 60);
+        long effectiveExpireBy = Math.max(expireByEpochSecond, minAllowedExpireBy);
+
         Map<String, Object> body = new HashMap<>();
         body.put("amount", amount.multiply(BigDecimal.valueOf(100)).longValue()); // Amount in paise
         body.put("currency", "INR");
         body.put("accept_partial", false);
         body.put("description", description);
-        body.put("expire_by", expireByEpochSecond);
+        body.put("expire_by", effectiveExpireBy);
 
         Map<String, Object> customer = new HashMap<>();
         customer.put("name", customerName);

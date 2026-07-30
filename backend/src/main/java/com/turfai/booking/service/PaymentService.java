@@ -43,7 +43,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class PaymentService {
 
-    public static final int PAYMENT_TIMEOUT_MINUTES = 5;
+    public static final int PAYMENT_TIMEOUT_MINUTES = 15;
     private static final String HMAC_SHA256_ALGORITHM = "HmacSHA256";
 
     private final RazorpayProperties razorpayProperties;
