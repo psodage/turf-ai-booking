@@ -39,4 +39,17 @@ com.turfai.booking
 
 ## Git & Development Workflow
 - **Branch Naming:** `feature/M01-project-boots`, `fix/issue-description`.
-- **Commit Style:** Conventional commits (`feat:`, `fix:`, `docs:`, `test:`).
+- **Commit Style:** Use format `ai: <short summary>` (e.g. `ai: fix login validation`).
+
+### Git Commit Policy
+After completing ANY code modification:
+1. Verify the changes are complete.
+2. Stage all modified, new, and deleted files (`git add -A`).
+3. Create a Git commit immediately.
+4. Use a clear, concise commit message following the format: `ai: <short summary>`.
+
+**Rules:**
+- Never leave the working tree with uncommitted changes after completing a task.
+- Only skip committing if explicitly instructed ("don't commit", "no commit", "leave changes uncommitted").
+- If a commit fails (merge conflict, hooks, permissions, etc.), stop and explain the reason instead of silently continuing.
+- At the end of every task, include the commit hash and commit message in your final response.
