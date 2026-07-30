@@ -11,7 +11,6 @@ CREATE TABLE conversation (
     business_id    UUID        NOT NULL,
     role           VARCHAR(20) NOT NULL,
     current_intent VARCHAR(100),
-    preferred_language VARCHAR(20) DEFAULT 'EN',
     status         VARCHAR(20) NOT NULL DEFAULT 'ACTIVE',
     last_activity  TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     created_at     TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
