@@ -5,12 +5,23 @@
 -- Target Turf: Green Pitch Main Turf (5v5)
 -- ============================================================
 
--- 0. Clean Operating Hours, Pricing Rules & Settings for Idempotency
+-- 0. Clean Existing Demo Data for Idempotency and Compatibility (No ON CONFLICT in H2)
 DELETE FROM system_setting WHERE setting_key IN ('HOLD_DURATION_MINUTES', 'CANCELLATION_WINDOW_HOURS', 'ADVANCE_BOOKING_DAYS', 'BUSINESS_DEFAULT_TIMEZONE');
 DELETE FROM pricing_rule WHERE turf_id = '33333333-3333-3333-3333-333333333333';
 DELETE FROM operating_hours WHERE turf_id = '33333333-3333-3333-3333-333333333333';
+DELETE FROM blocked_slot WHERE turf_id = '33333333-3333-3333-3333-333333333333';
+DELETE FROM booking_audit WHERE booking_id IN (SELECT id FROM booking WHERE turf_id = '33333333-3333-3333-3333-333333333333');
+DELETE FROM booking_hold WHERE booking_id IN (SELECT id FROM booking WHERE turf_id = '33333333-3333-3333-3333-333333333333');
+DELETE FROM payment_audit WHERE payment_id IN (SELECT id FROM payment WHERE booking_id IN (SELECT id FROM booking WHERE turf_id = '33333333-3333-3333-3333-333333333333'));
+DELETE FROM payment WHERE booking_id IN (SELECT id FROM booking WHERE turf_id = '33333333-3333-3333-3333-333333333333');
+DELETE FROM booking WHERE turf_id = '33333333-3333-3333-3333-333333333333';
+DELETE FROM conversation_message WHERE conversation_id IN (SELECT id FROM conversation WHERE business_id = '11111111-1111-1111-1111-111111111111');
+DELETE FROM conversation WHERE business_id = '11111111-1111-1111-1111-111111111111';
+DELETE FROM turf WHERE id = '33333333-3333-3333-3333-333333333333';
+DELETE FROM users WHERE business_id = '11111111-1111-1111-1111-111111111111';
+DELETE FROM business WHERE id = '11111111-1111-1111-1111-111111111111';
 
--- 1. Upsert Business
+-- 1. Insert Business
 INSERT INTO business (id, name, address, city, state, pincode, google_maps_link, phone, whatsapp_phone_number_id, timezone, status)
 VALUES (
     '11111111-1111-1111-1111-111111111111',
@@ -24,20 +35,9 @@ VALUES (
     '1174774225727644',
     'Asia/Kolkata',
     'ACTIVE'
-)
-ON CONFLICT (id) DO UPDATE SET
-    name = EXCLUDED.name,
-    address = EXCLUDED.address,
-    city = EXCLUDED.city,
-    state = EXCLUDED.state,
-    pincode = EXCLUDED.pincode,
-    google_maps_link = EXCLUDED.google_maps_link,
-    phone = EXCLUDED.phone,
-    whatsapp_phone_number_id = EXCLUDED.whatsapp_phone_number_id,
-    timezone = EXCLUDED.timezone,
-    status = EXCLUDED.status;
+);
 
--- 2. Upsert Owner User
+-- 2. Insert Owner User
 INSERT INTO users (id, business_id, name, phone, email, role, language, status)
 VALUES (
     '22222222-2222-2222-2222-222222222222',
@@ -48,16 +48,9 @@ VALUES (
     'OWNER',
     'en',
     'ACTIVE'
-)
-ON CONFLICT (id) DO UPDATE SET
-    name = EXCLUDED.name,
-    phone = EXCLUDED.phone,
-    email = EXCLUDED.email,
-    role = EXCLUDED.role,
-    language = EXCLUDED.language,
-    status = EXCLUDED.status;
+);
 
--- 3. Upsert Turf
+-- 3. Insert Turf
 INSERT INTO turf (id, business_id, name, type, capacity, status)
 VALUES (
     '33333333-3333-3333-3333-333333333333',
@@ -66,12 +59,7 @@ VALUES (
     'FIVE_A_SIDE',
     10,
     'ACTIVE'
-)
-ON CONFLICT (id) DO UPDATE SET
-    name = EXCLUDED.name,
-    type = EXCLUDED.type,
-    capacity = EXCLUDED.capacity,
-    status = EXCLUDED.status;
+);
 
 -- 4. Insert Operating Hours (Mon-Sun: 06:00 to 23:00)
 INSERT INTO operating_hours (id, turf_id, day_of_week, opening_time, closing_time, is_closed)

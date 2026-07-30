@@ -43,12 +43,15 @@ public class WhatsAppWebhookController {
         log.info(">>> RECEIVED META GET HANDSHAKE: mode='{}', verifyToken='{}', expectedToken='{}', challenge='{}'",
                 mode, verifyToken, expectedToken, challenge);
 
-        if (challenge != null && !challenge.isBlank()) {
-            log.info(">>> SUCCESS: Responding with challenge '{}'", challenge);
-            return ResponseEntity.ok(challenge);
+        if ("subscribe".equals(mode) && expectedToken != null && expectedToken.equals(verifyToken)) {
+            if (challenge != null && !challenge.isBlank()) {
+                log.info(">>> SUCCESS: Responding with challenge '{}'", challenge);
+                return ResponseEntity.ok(challenge);
+            }
         }
 
-        return ResponseEntity.ok("OK");
+        log.warn(">>> FAILURE: Handshake verification failed.");
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Forbidden");
     }
 
     @PostMapping
