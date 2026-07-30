@@ -7,21 +7,22 @@
 
 -- 0. Clean Existing Demo Data for Idempotency and Compatibility (No ON CONFLICT in H2)
 DELETE FROM system_setting WHERE setting_key IN ('HOLD_DURATION_MINUTES', 'CANCELLATION_WINDOW_HOURS', 'ADVANCE_BOOKING_DAYS', 'BUSINESS_DEFAULT_TIMEZONE');
-DELETE FROM pricing_rule WHERE turf_id = '33333333-3333-3333-3333-333333333333';
-DELETE FROM operating_hours WHERE turf_id = '33333333-3333-3333-3333-333333333333';
-DELETE FROM blocked_slot WHERE turf_id = '33333333-3333-3333-3333-333333333333';
-DELETE FROM booking_audit WHERE booking_id IN (SELECT id FROM booking WHERE turf_id = '33333333-3333-3333-3333-333333333333');
-DELETE FROM booking_hold WHERE booking_id IN (SELECT id FROM booking WHERE turf_id = '33333333-3333-3333-3333-333333333333');
-DELETE FROM payment_audit WHERE payment_id IN (SELECT id FROM payment WHERE booking_id IN (SELECT id FROM booking WHERE turf_id = '33333333-3333-3333-3333-333333333333'));
-DELETE FROM payment WHERE booking_id IN (SELECT id FROM booking WHERE turf_id = '33333333-3333-3333-3333-333333333333');
-DELETE FROM booking WHERE turf_id = '33333333-3333-3333-3333-333333333333';
+DELETE FROM payment_audit WHERE payment_id IN (SELECT id FROM payment WHERE business_id = '11111111-1111-1111-1111-111111111111' OR booking_id IN (SELECT id FROM booking WHERE business_id = '11111111-1111-1111-1111-111111111111'));
+DELETE FROM payment WHERE business_id = '11111111-1111-1111-1111-111111111111' OR booking_id IN (SELECT id FROM booking WHERE business_id = '11111111-1111-1111-1111-111111111111');
+DELETE FROM booking_audit WHERE booking_id IN (SELECT id FROM booking WHERE business_id = '11111111-1111-1111-1111-111111111111');
+DELETE FROM booking_hold WHERE booking_id IN (SELECT id FROM booking WHERE business_id = '11111111-1111-1111-1111-111111111111');
+DELETE FROM booking WHERE business_id = '11111111-1111-1111-1111-111111111111';
 DELETE FROM report WHERE business_id = '11111111-1111-1111-1111-111111111111';
 DELETE FROM notification WHERE business_id = '11111111-1111-1111-1111-111111111111';
 DELETE FROM conversation_message WHERE conversation_id IN (SELECT id FROM conversation WHERE business_id = '11111111-1111-1111-1111-111111111111');
 DELETE FROM conversation WHERE business_id = '11111111-1111-1111-1111-111111111111';
-DELETE FROM turf WHERE id = '33333333-3333-3333-3333-333333333333';
+DELETE FROM pricing_rule WHERE turf_id IN (SELECT id FROM turf WHERE business_id = '11111111-1111-1111-1111-111111111111');
+DELETE FROM operating_hours WHERE turf_id IN (SELECT id FROM turf WHERE business_id = '11111111-1111-1111-1111-111111111111');
+DELETE FROM blocked_slot WHERE turf_id IN (SELECT id FROM turf WHERE business_id = '11111111-1111-1111-1111-111111111111');
+DELETE FROM turf WHERE business_id = '11111111-1111-1111-1111-111111111111';
 DELETE FROM users WHERE business_id = '11111111-1111-1111-1111-111111111111';
 DELETE FROM business WHERE id = '11111111-1111-1111-1111-111111111111';
+
 
 -- 1. Insert Business
 INSERT INTO business (id, name, address, city, state, pincode, google_maps_link, phone, whatsapp_phone_number_id, timezone, status, latitude, longitude)
