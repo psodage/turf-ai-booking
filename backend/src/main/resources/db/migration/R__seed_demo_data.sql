@@ -6,6 +6,14 @@
 -- ============================================================
 
 -- 0. Clean Existing Demo Data for Idempotency
+DELETE FROM conversation_message WHERE conversation_id IN (SELECT id FROM conversation WHERE business_id = '11111111-1111-1111-1111-111111111111');
+DELETE FROM conversation WHERE business_id = '11111111-1111-1111-1111-111111111111';
+DELETE FROM booking_audit WHERE booking_id IN (SELECT id FROM booking WHERE turf_id = '33333333-3333-3333-3333-333333333333');
+DELETE FROM payment_audit WHERE payment_id IN (SELECT id FROM payment WHERE booking_id IN (SELECT id FROM booking WHERE turf_id = '33333333-3333-3333-3333-333333333333'));
+DELETE FROM payment WHERE booking_id IN (SELECT id FROM booking WHERE turf_id = '33333333-3333-3333-3333-333333333333');
+DELETE FROM booking_hold WHERE turf_id = '33333333-3333-3333-3333-333333333333';
+DELETE FROM booking WHERE turf_id = '33333333-3333-3333-3333-333333333333';
+DELETE FROM blocked_slot WHERE turf_id = '33333333-3333-3333-3333-333333333333';
 DELETE FROM system_setting WHERE setting_key IN ('HOLD_DURATION_MINUTES', 'CANCELLATION_WINDOW_HOURS', 'ADVANCE_BOOKING_DAYS', 'BUSINESS_DEFAULT_TIMEZONE');
 DELETE FROM pricing_rule WHERE turf_id = '33333333-3333-3333-3333-333333333333';
 DELETE FROM operating_hours WHERE turf_id = '33333333-3333-3333-3333-333333333333';
@@ -24,7 +32,7 @@ VALUES (
     '416012',
     'https://maps.google.com/?q=Rankala+Kolhapur',
     '+919876543210',
-    '1284997344689548',
+    '1174774225727644',
     'Asia/Kolkata',
     'ACTIVE'
 );
