@@ -101,13 +101,30 @@ public class LanguageDetector {
             }
         }
 
-        // Neutral inputs like numbers, single words, or pure English
-        if (isPureEnglish(lower)) {
+        // Neutral inputs like slot numbers ("6 to 7", "6:00", "1"), numbers, or simple ok/yes/no
+        if (isNeutralInput(lower)) {
+            log.info("Detected neutral input '{}', maintaining session language: {}", text, currentLanguage);
+            return (currentLanguage != null && !currentLanguage.isBlank()) ? currentLanguage : "EN";
+        }
+
+        // Check for Pure English explicit phrases
+        if (isExplicitEnglish(lower)) {
             log.info("Detected EN (English) for input: {}", text);
             return "EN";
         }
 
         return (currentLanguage != null && !currentLanguage.isBlank()) ? currentLanguage : "EN";
+    }
+
+    private boolean isNeutralInput(String text) {
+        // Pure numbers, slot selections like "6 to 7", "6:00-7:00", or single neutral words
+        return text.matches("^[0-9\\s:/-]+$") || text.matches("^(6 to 7|7 to 8|1|2|3|4|5|ok|yes|no|thanks|thank you)$");
+    }
+
+    private boolean isExplicitEnglish(String text) {
+        return text.contains("book slot for tomorrow") || text.contains("check availability") 
+                || text.contains("view my booking") || text.contains("cancel booking")
+                || text.contains("where is your location") || text.contains("what is the price");
     }
 
     private boolean containsAnyWord(String text, Set<String> words) {
