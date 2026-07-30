@@ -31,7 +31,7 @@ public class SecurityConfig {
                     "/favicon.ico", "/robots.txt"
                 ).permitAll()
                 // API, webhooks, and actuator
-                .requestMatchers("/actuator/**", "/webhook/**", "/api/v1/**").permitAll()
+                .requestMatchers("/actuator/**", "/webhook/**", "/webhooks/**", "/api/v1/**").permitAll()
                 .anyRequest().authenticated()
             );
 
