@@ -28,15 +28,15 @@ public class DemoAutoConfirmScheduler {
     }
 
     public void scheduleAutoConfirmation(UUID bookingId) {
-        log.info("Demo Mode: Scheduling 30-second auto-confirmation for booking ID: {}", bookingId);
+        log.info("Demo Mode: Scheduling fast 5-second auto-confirmation for booking ID: {}", bookingId);
         scheduler.schedule(() -> {
             try {
-                log.info("Demo Mode: Executing 30-second auto-confirmation for booking ID: {}", bookingId);
-                bookingService.confirmBooking(bookingId, "DEMO_AUTO_CONFIRM_30S");
+                log.info("Demo Mode: Executing auto-confirmation for booking ID: {}", bookingId);
+                bookingService.confirmBooking(bookingId, "DEMO_AUTO_CONFIRM");
             } catch (Exception ex) {
                 log.error("Demo Mode: Error during auto-confirmation for booking ID: {}", bookingId, ex);
             }
-        }, 30, TimeUnit.SECONDS);
+        }, 5, TimeUnit.SECONDS);
     }
 
     @PreDestroy

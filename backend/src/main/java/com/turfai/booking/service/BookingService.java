@@ -316,6 +316,10 @@ public class BookingService {
                     try {
                         Optional<Conversation> convOpt = conversationRepository.findByUserIdAndBusinessIdAndStatus(
                                 booking.getCustomer().getId(), booking.getBusiness().getId(), ConversationStatus.ACTIVE);
+                        if (convOpt.isEmpty()) {
+                            convOpt = conversationRepository.findByUserIdAndBusinessId(
+                                    booking.getCustomer().getId(), booking.getBusiness().getId());
+                        }
                         if (convOpt.isPresent()) {
                             conversationService.saveOutgoingMessage(convOpt.get(), confirmMsg, MessageType.TEXT);
                         }
