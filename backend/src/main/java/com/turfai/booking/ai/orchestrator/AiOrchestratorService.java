@@ -10,6 +10,7 @@ import com.turfai.booking.ai.provider.AiRequest;
 import com.turfai.booking.ai.provider.AiResponse;
 import com.turfai.booking.ai.tool.AiToolGateway;
 import com.turfai.booking.ai.tool.ToolResult;
+import com.turfai.booking.entity.BlockReason;
 import com.turfai.booking.entity.Conversation;
 import com.turfai.booking.entity.MessageType;
 import com.turfai.booking.entity.Turf;
@@ -190,6 +191,15 @@ public class AiOrchestratorService {
                 return aiToolGateway.getTodayBookings(conversation.getBusiness().getId(), LocalDate.now());
             case "getBusinessSummary":
                 return aiToolGateway.getBusinessSummary(conversation.getBusiness().getId(), LocalDate.now());
+            case "blockSlot":
+                BlockReason reason = BlockReason.MAINTENANCE;
+                if (args != null && args.containsKey("reason")) {
+                    try { reason = BlockReason.valueOf(String.valueOf(args.get("reason")).toUpperCase()); } catch (Exception e) {}
+                }
+                return aiToolGateway.blockSlot(defaultTurfId, date, startTime, endTime, reason, conversation.getUser().getId());
+            case "unblockSlot":
+                UUID blockedId = parseUuidArg(args != null ? args.get("blockedSlotId") : null, UUID.randomUUID());
+                return aiToolGateway.unblockSlot(blockedId, conversation.getUser().getId());
             default:
                 return ToolResult.error("UNKNOWN_TOOL", "Requested tool is not supported.", null);
         }
