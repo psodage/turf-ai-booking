@@ -63,7 +63,7 @@ class FlywayMigrationTest {
 
         // Verify Seed Data (R__seed_demo_data.sql)
         assertThat(businessRepository.findByWhatsappPhoneNumberId("1174774225727644")).isPresent();
-        assertThat(userRepository.findByPhone("+919876543210")).isPresent();
+        assertThat(userRepository.findByPhone("+919325025671")).isPresent();
 
         // Verify System Settings seed
         assertThat(systemSettingRepository.findById("HOLD_DURATION_MINUTES")).isPresent();

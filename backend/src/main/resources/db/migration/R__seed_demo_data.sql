@@ -1,7 +1,7 @@
 -- ============================================================
 -- Repeatable Migration: Seed Demo Data for Local Dev & Testing
 -- Target Business: Green Pitch Kolhapur
--- Target Owner: Rajesh Patil (+919876543210)
+-- Target Owner: Rajesh Patil (+919325025671)
 -- Target Turf: Green Pitch Main Turf (5v5)
 -- ============================================================
 
@@ -34,7 +34,7 @@ VALUES (
     'Maharashtra',
     '416012',
     'https://maps.google.com/?q=Rankala+Kolhapur',
-    '+919876543210',
+    '+919325025671',
     '1174774225727644',
     'Asia/Kolkata',
     'ACTIVE',
@@ -48,7 +48,7 @@ VALUES (
     '22222222-2222-2222-2222-222222222222',
     '11111111-1111-1111-1111-111111111111',
     'Rajesh Patil',
-    '+919876543210',
+    '+919325025671',
     'rajesh@greenpitch.in',
     'OWNER',
     'en',
