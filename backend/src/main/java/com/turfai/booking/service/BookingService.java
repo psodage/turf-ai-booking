@@ -24,10 +24,15 @@ import com.turfai.booking.exception.ErrorCode;
 import com.turfai.booking.exception.HoldExpiredException;
 import com.turfai.booking.exception.OutsideOperatingHoursException;
 import com.turfai.booking.exception.SlotUnavailableException;
+import com.turfai.booking.entity.Conversation;
+import com.turfai.booking.entity.ConversationStatus;
+import com.turfai.booking.entity.MessageType;
 import com.turfai.booking.repository.BookingAuditRepository;
 import com.turfai.booking.repository.BookingHoldRepository;
 import com.turfai.booking.repository.BookingRepository;
+import com.turfai.booking.repository.ConversationRepository;
 import com.turfai.booking.repository.UserRepository;
+import com.turfai.booking.scheduler.DemoAutoConfirmScheduler;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
@@ -67,6 +72,9 @@ public class BookingService {
     private final BookingAuditRepository bookingAuditRepository;
     private final UserRepository userRepository;
     private final WhatsAppService whatsAppService;
+    private final ConversationRepository conversationRepository;
+    private final ConversationService conversationService;
+    private final DemoAutoConfirmScheduler demoAutoConfirmScheduler;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -200,6 +208,11 @@ public class BookingService {
             // Audit log
             logAudit(booking, null, BookingStatus.HOLD, customer, "Booking hold created");
 
+            // Temporary Demo: Schedule auto-confirmation after 30 seconds
+            if (demoAutoConfirmScheduler != null) {
+                demoAutoConfirmScheduler.scheduleAutoConfirmation(booking.getId());
+            }
+
             return BookingHoldResponse.builder()
                     .holdId(hold.getId())
                     .bookingId(booking.getId())
@@ -298,6 +311,18 @@ public class BookingService {
                 );
                 whatsAppService.sendTextMessage(phone, confirmMsg);
                 log.info("Sent automated WhatsApp confirmation message to customer {} for booking {}", phone, booking.getBookingNumber());
+
+                if (booking.getBusiness() != null && booking.getCustomer() != null) {
+                    try {
+                        Optional<Conversation> convOpt = conversationRepository.findByUserIdAndBusinessIdAndStatus(
+                                booking.getCustomer().getId(), booking.getBusiness().getId(), ConversationStatus.ACTIVE);
+                        if (convOpt.isPresent()) {
+                            conversationService.saveOutgoingMessage(convOpt.get(), confirmMsg, MessageType.TEXT);
+                        }
+                    } catch (Exception convEx) {
+                        log.warn("Could not save outgoing confirmation message to conversation: {}", convEx.getMessage());
+                    }
+                }
             }
         } catch (Exception ex) {
             log.error("Failed to send automated WhatsApp confirmation message for booking {}", booking.getBookingNumber(), ex);

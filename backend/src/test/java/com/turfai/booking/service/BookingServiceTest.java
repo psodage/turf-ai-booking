@@ -15,7 +15,9 @@ import com.turfai.booking.exception.CancellationDeniedException;
 import com.turfai.booking.repository.BookingAuditRepository;
 import com.turfai.booking.repository.BookingHoldRepository;
 import com.turfai.booking.repository.BookingRepository;
+import com.turfai.booking.repository.ConversationRepository;
 import com.turfai.booking.repository.UserRepository;
+import com.turfai.booking.scheduler.DemoAutoConfirmScheduler;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -35,6 +37,7 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -49,6 +52,9 @@ class BookingServiceTest {
     @Mock private BookingAuditRepository bookingAuditRepository;
     @Mock private UserRepository userRepository;
     @Mock private WhatsAppService whatsAppService;
+    @Mock private ConversationRepository conversationRepository;
+    @Mock private ConversationService conversationService;
+    @Mock private DemoAutoConfirmScheduler demoAutoConfirmScheduler;
     @Mock private EntityManager entityManager;
 
     private BookingService bookingService;
@@ -61,7 +67,7 @@ class BookingServiceTest {
 
     @BeforeEach
     void setUp() {
-        bookingService = new BookingService(turfService, operatingHoursService, pricingService, slotService, bookingRepository, bookingHoldRepository, bookingAuditRepository, userRepository, whatsAppService);
+        bookingService = new BookingService(turfService, operatingHoursService, pricingService, slotService, bookingRepository, bookingHoldRepository, bookingAuditRepository, userRepository, whatsAppService, conversationRepository, conversationService, demoAutoConfirmScheduler);
 
         testBusiness = Business.builder()
                 .name("Green Pitch")
