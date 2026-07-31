@@ -35,6 +35,9 @@ public class ConversationService {
 
         if (convOpt.isPresent()) {
             Conversation conv = convOpt.get();
+            if (conv.getRole() != user.getRole()) {
+                conv.setRole(user.getRole());
+            }
             conv.setLastActivity(Instant.now());
             return conversationRepository.save(conv);
         }

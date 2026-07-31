@@ -27,4 +27,10 @@ public interface UserRepository extends JpaRepository<User, UUID> {
      * Finds all staff members (OWNER/MANAGER) for a business.
      */
     List<User> findByBusinessIdAndRole(UUID businessId, UserRole role);
+
+    /**
+     * Finds users whose phone ends with the target 10 digits (flexible matching).
+     */
+    @org.springframework.data.jpa.repository.Query("SELECT u FROM User u WHERE REPLACE(REPLACE(u.phone, ' ', ''), '+', '') LIKE %:last10Digits")
+    List<User> findByPhoneEndingWith(@org.springframework.data.repository.query.Param("last10Digits") String last10Digits);
 }
