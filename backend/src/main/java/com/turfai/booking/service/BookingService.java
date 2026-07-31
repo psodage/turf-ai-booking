@@ -323,6 +323,39 @@ public class BookingService {
                         log.warn("Could not save outgoing confirmation message to conversation: {}", convEx.getMessage());
                     }
                 }
+
+                // Send real-time notification to Turf Owner
+                if (booking.getBusiness() != null) {
+                    try {
+                        List<User> owners = userRepository.findByBusinessIdAndRole(booking.getBusiness().getId(), UserRole.OWNER);
+                        for (User owner : owners) {
+                            if (owner.getPhone() != null && !owner.getPhone().equals(phone)) {
+                                String ownerMsg = String.format(
+                                        "📢 *NEW BOOKING CONFIRMED!* ⚽\n\n" +
+                                        "• *Booking Ref:* %s\n" +
+                                        "• *Turf:* %s\n" +
+                                        "• *Customer:* %s (%s)\n" +
+                                        "• *Date:* %s\n" +
+                                        "• *Time:* %s - %s\n" +
+                                        "• *Amount:* ₹%s\n" +
+                                        "• *Status:* CONFIRMED ✅",
+                                        booking.getBookingNumber(),
+                                        booking.getTurf() != null ? booking.getTurf().getName() : "Green Pitch Turf",
+                                        booking.getCustomer() != null ? booking.getCustomer().getName() : "Customer",
+                                        booking.getCustomer() != null ? booking.getCustomer().getPhone() : "N/A",
+                                        booking.getBookingDate(),
+                                        booking.getStartTime(),
+                                        booking.getEndTime(),
+                                        booking.getPrice()
+                                );
+                                whatsAppService.sendTextMessage(owner.getPhone(), ownerMsg);
+                                log.info("Sent real-time owner booking notification to owner {} ({}) for booking {}", owner.getName(), owner.getPhone(), booking.getBookingNumber());
+                            }
+                        }
+                    } catch (Exception ownerEx) {
+                        log.warn("Could not send real-time owner notification: {}", ownerEx.getMessage());
+                    }
+                }
             }
         } catch (Exception ex) {
             log.error("Failed to send automated WhatsApp confirmation message for booking {}", booking.getBookingNumber(), ex);
