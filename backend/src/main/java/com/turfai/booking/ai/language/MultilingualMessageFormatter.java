@@ -68,39 +68,39 @@ public class MultilingualMessageFormatter {
         if (isOwnerOrManager) {
             rows = switch (language) {
                 case "HI" -> List.of(
-                        OutboundRow.builder().id("get_business_summary").title("📊 आज का सारांश और राजस्व").description("कुल बुकिंग, पुष्ट स्थिति और राजस्व देखें").build(),
-                        OutboundRow.builder().id("get_today_bookings").title("📋 आज का पूरा शेड्यूल").description("आज की सभी ग्राहक बुकिंग देखें").build(),
-                        OutboundRow.builder().id("block_slot").title("🚫 स्लॉट ब्लॉक करें (रखरखाव)").description("रखरखाव या ऑफ़लाइन बुकिंग के लिए स्लॉट ब्लॉक करें").build(),
-                        OutboundRow.builder().id("unblock_slot").title("🔓 स्लॉट अनब्लॉक करें").description("अवरुद्ध स्लॉट को अनब्लॉक करें").build(),
-                        OutboundRow.builder().id("excel_report").title("📥 एक्सेल रिपोर्ट डाउनलोड करें").description("दैनिक/मासिक एक्सेल रिपोर्ट प्राप्त करें").build()
+                        OutboundRow.builder().id("get_business_summary").title("📊 आज का सारांश").description("कुल बुकिंग और राजस्व देखें").build(),
+                        OutboundRow.builder().id("get_today_bookings").title("📋 आज का शेड्यूल").description("आज की सभी बुकिंग देखें").build(),
+                        OutboundRow.builder().id("block_slot").title("🚫 स्लॉट ब्लॉक करें").description("रखरखाव के लिए स्लॉट ब्लॉक करें").build(),
+                        OutboundRow.builder().id("unblock_slot").title("🔓 स्लॉट अनब्लॉक").description("ब्लॉक स्लॉट अनब्लॉक करें").build(),
+                        OutboundRow.builder().id("excel_report").title("📥 एक्सेल रिपोर्ट").description("दैनिक/मासिक रिपोर्ट प्राप्त करें").build()
                 );
                 case "MR" -> List.of(
-                        OutboundRow.builder().id("get_business_summary").title("📊 आजचा सारांश आणि महसूल").description("एकूण बुकिंग, कन्फर्म संख्या आणि महसूल पहा").build(),
-                        OutboundRow.builder().id("get_today_bookings").title("📋 आजचे पूर्ण वेळापत्रक").description("आजच्या सर्व ग्राहकांच्या बुकिंग पहा").build(),
-                        OutboundRow.builder().id("block_slot").title("🚫 स्लॉट ब्लॉक करा").description("मेंटेनन्स किंवा ऑफलाइन बुकिंगसाठी स्लॉट ब्लॉक करा").build(),
-                        OutboundRow.builder().id("unblock_slot").title("🔓 स्लॉट अनब्लॉक करा").description("ब्लॉक केलेला स्लॉट अनब्लॉक करा").build(),
-                        OutboundRow.builder().id("excel_report").title("📥 एक्सेल रिपोर्ट डाउनलोड करा").description("दैनिक/मासिक एक्सेल रिपोर्ट मिळवा").build()
+                        OutboundRow.builder().id("get_business_summary").title("📊 आजचा सारांश").description("एकूण बुकिंग आणि महसूल पहा").build(),
+                        OutboundRow.builder().id("get_today_bookings").title("📋 आजचे वेळापत्रक").description("आजच्या सर्व बुकिंग पहा").build(),
+                        OutboundRow.builder().id("block_slot").title("🚫 स्लॉट ब्लॉक करा").description("मेंटेनन्ससाठी स्लॉट ब्लॉक करा").build(),
+                        OutboundRow.builder().id("unblock_slot").title("🔓 स्लॉट अनब्लॉक").description("ब्लॉक स्लॉट अनब्लॉक करा").build(),
+                        OutboundRow.builder().id("excel_report").title("📥 एक्सेल रिपोर्ट").description("दैनिक/मासिक रिपोर्ट मिळवा").build()
                 );
                 case "HINGLISH" -> List.of(
-                        OutboundRow.builder().id("get_business_summary").title("📊 Today's Summary & Revenue").description("Total bookings and revenue dekhein").build(),
-                        OutboundRow.builder().id("get_today_bookings").title("📋 Today's Schedule").description("Aaj ki sabhi customer bookings dekhein").build(),
-                        OutboundRow.builder().id("block_slot").title("🚫 Block Slot (Maintenance)").description("Slot block karein offline/maintenance ke liye").build(),
-                        OutboundRow.builder().id("unblock_slot").title("🔓 Unblock Slot").description("Blocked slot ko unblock karein").build(),
-                        OutboundRow.builder().id("excel_report").title("📥 Download Excel Report").description("Daily/monthly Excel report paayein").build()
+                        OutboundRow.builder().id("get_business_summary").title("📊 Today's Summary").description("Total bookings aur revenue dekhein").build(),
+                        OutboundRow.builder().id("get_today_bookings").title("📋 Today's Schedule").description("Aaj ki sabhi bookings dekhein").build(),
+                        OutboundRow.builder().id("block_slot").title("🚫 Block Slot").description("Maintenance ke liye slot block karein").build(),
+                        OutboundRow.builder().id("unblock_slot").title("🔓 Unblock Slot").description("Blocked slot unblock karein").build(),
+                        OutboundRow.builder().id("excel_report").title("📥 Excel Report").description("Daily/monthly report paayein").build()
                 );
                 case "MINGLISH" -> List.of(
-                        OutboundRow.builder().id("get_business_summary").title("📊 Today's Summary & Revenue").description("Total bookings aani revenue paha").build(),
-                        OutboundRow.builder().id("get_today_bookings").title("📋 Today's Schedule").description("Aajchya sarv customer bookings paha").build(),
-                        OutboundRow.builder().id("block_slot").title("🚫 Block Slot (Maintenance)").description("Slot block kara offline/maintenance sathi").build(),
+                        OutboundRow.builder().id("get_business_summary").title("📊 Today's Summary").description("Total bookings aani revenue paha").build(),
+                        OutboundRow.builder().id("get_today_bookings").title("📋 Today's Schedule").description("Aajchya sarv bookings paha").build(),
+                        OutboundRow.builder().id("block_slot").title("🚫 Block Slot").description("Maintenance sathi slot block kara").build(),
                         OutboundRow.builder().id("unblock_slot").title("🔓 Unblock Slot").description("Blocked slot unblock kara").build(),
-                        OutboundRow.builder().id("excel_report").title("📥 Download Excel Report").description("Daily/monthly Excel report milwa").build()
+                        OutboundRow.builder().id("excel_report").title("📥 Excel Report").description("Daily/monthly report milwa").build()
                 );
                 default -> List.of(
-                        OutboundRow.builder().id("get_business_summary").title("📊 Today's Summary & Revenue").description("View total bookings, confirmed count & revenue").build(),
+                        OutboundRow.builder().id("get_business_summary").title("📊 Today's Summary").description("View total bookings, confirmed count & revenue").build(),
                         OutboundRow.builder().id("get_today_bookings").title("📋 Today's Schedule").description("View all customer bookings for today").build(),
-                        OutboundRow.builder().id("block_slot").title("🚫 Block Slot (Maintenance)").description("Block slot for maintenance or offline booking").build(),
+                        OutboundRow.builder().id("block_slot").title("🚫 Block Slot").description("Block slot for maintenance or offline booking").build(),
                         OutboundRow.builder().id("unblock_slot").title("🔓 Unblock Slot").description("Unblock a previously blocked slot").build(),
-                        OutboundRow.builder().id("excel_report").title("📥 Download Excel Report").description("Generate and receive daily/monthly Excel report").build()
+                        OutboundRow.builder().id("excel_report").title("📥 Excel Report").description("Get daily/monthly Excel report").build()
                 );
             };
         } else {
