@@ -15,6 +15,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.time.Instant;
 import java.util.Objects;
@@ -45,6 +47,7 @@ public class PaymentAudit {
     @Column(name = "event", nullable = false, length = 100)
     private String event;
 
+    @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "gateway_payload", columnDefinition = "jsonb")
     private String gatewayPayload;
 

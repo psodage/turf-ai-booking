@@ -14,6 +14,7 @@ import com.turfai.booking.entity.BlockReason;
 import com.turfai.booking.entity.Conversation;
 import com.turfai.booking.entity.MessageType;
 import com.turfai.booking.entity.Turf;
+import com.turfai.booking.entity.UserRole;
 import com.turfai.booking.repository.TurfRepository;
 import com.turfai.booking.service.ConversationService;
 import com.turfai.booking.service.WhatsAppService;
@@ -112,7 +113,8 @@ public class AiOrchestratorService {
     }
 
     private void sendInteractiveMenu(Conversation conversation, String lang) {
-        MultilingualMessageFormatter.MenuConfig menuConfig = multilingualMessageFormatter.getMenuConfig(lang);
+        UserRole role = (conversation.getUser() != null) ? conversation.getUser().getRole() : UserRole.CUSTOMER;
+        MultilingualMessageFormatter.MenuConfig menuConfig = multilingualMessageFormatter.getMenuConfig(role, lang);
 
         whatsAppService.sendListMessage(
                 conversation.getUser().getPhone(),
@@ -122,7 +124,7 @@ public class AiOrchestratorService {
                 menuConfig.sections()
         );
         conversationService.saveOutgoingMessage(conversation, menuConfig.header() + "\n" + menuConfig.body(), MessageType.LIST);
-        log.info("Sent interactive WhatsApp menu list to customer {} in language {}", conversation.getUser().getPhone(), lang);
+        log.info("Sent interactive WhatsApp menu list to user {} (Role: {}) in language {}", conversation.getUser().getPhone(), role, lang);
     }
 
     private void sendLocationResponse(Conversation conversation, String lang) {

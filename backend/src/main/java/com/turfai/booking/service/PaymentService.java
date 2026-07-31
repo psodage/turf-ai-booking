@@ -273,10 +273,6 @@ public class PaymentService {
 
         String calculatedSignature = calculateHmacSha256(rawPayload, secret != null ? secret : "");
         if (!MessageDigest.isEqual(signatureHeader.getBytes(StandardCharsets.UTF_8), calculatedSignature.getBytes(StandardCharsets.UTF_8))) {
-            if ("test".equalsIgnoreCase(mode) || "mock".equalsIgnoreCase(mode)) {
-                log.warn("Razorpay webhook signature mismatch in {} mode. Proceeding with webhook processing.", mode);
-                return;
-            }
             throw new WebhookSignatureException("Invalid Razorpay webhook signature");
         }
     }

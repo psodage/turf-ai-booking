@@ -34,7 +34,15 @@ public class DemoAutoConfirmScheduler {
                 log.info("Demo Mode: Executing auto-confirmation for booking ID: {}", bookingId);
                 bookingService.confirmBooking(bookingId, "DEMO_AUTO_CONFIRM");
             } catch (Exception ex) {
-                log.error("Demo Mode: Error during auto-confirmation for booking ID: {}", bookingId, ex);
+                log.warn("Demo Mode: First attempt for booking ID {} failed: {}. Retrying in 2 seconds...", bookingId, ex.getMessage());
+                scheduler.schedule(() -> {
+                    try {
+                        bookingService.confirmBooking(bookingId, "DEMO_AUTO_CONFIRM");
+                        log.info("Demo Mode: Auto-confirmation succeeded on retry for booking ID: {}", bookingId);
+                    } catch (Exception retryEx) {
+                        log.error("Demo Mode: Error during auto-confirmation retry for booking ID: {}", bookingId, retryEx);
+                    }
+                }, 2, TimeUnit.SECONDS);
             }
         }, 5, TimeUnit.SECONDS);
     }
