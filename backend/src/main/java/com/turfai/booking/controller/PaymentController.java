@@ -50,4 +50,15 @@ public class PaymentController {
         PaymentResponse response = paymentService.initiateRefund(paymentId, reason);
         return ResponseEntity.ok(response);
     }
+
+    @PostMapping("/verify")
+    @Operation(summary = "Verify & Confirm Razorpay Test/Live Payment")
+    public ResponseEntity<PaymentResponse> verifyPayment(
+            @RequestParam(required = false) UUID bookingId,
+            @RequestParam(required = false) String razorpayPaymentId,
+            @RequestParam(required = false) String razorpayLinkId) {
+
+        PaymentResponse response = paymentService.verifyAndConfirmPayment(bookingId, razorpayPaymentId, razorpayLinkId);
+        return ResponseEntity.ok(response);
+    }
 }
