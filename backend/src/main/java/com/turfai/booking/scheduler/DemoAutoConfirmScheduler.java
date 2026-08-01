@@ -28,7 +28,7 @@ public class DemoAutoConfirmScheduler {
     }
 
     public void scheduleAutoConfirmation(UUID bookingId) {
-        log.info("Demo Mode: Scheduling 5-second auto-confirmation for booking ID: {}", bookingId);
+        log.info("Demo Mode: Scheduling 30-second auto-confirmation for booking ID: {}", bookingId);
         scheduler.schedule(() -> {
             int maxRetries = 3;
             for (int attempt = 1; attempt <= maxRetries; attempt++) {
@@ -54,7 +54,7 @@ public class DemoAutoConfirmScheduler {
                     }
                 }
             }
-        }, 5, TimeUnit.SECONDS);
+        }, 30, TimeUnit.SECONDS);
     }
 
     @PreDestroy
