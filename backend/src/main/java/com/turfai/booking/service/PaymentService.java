@@ -330,10 +330,12 @@ public class PaymentService {
     }
 
     private void logPaymentAudit(Payment payment, String event, String notes) {
+        // gateway_payload column is PostgreSQL JSON type — must be valid JSON
+        String jsonPayload = "{\"notes\":\"" + (notes != null ? notes.replace("\\", "\\\\").replace("\"", "\\\"") : "") + "\"}";
         PaymentAudit audit = PaymentAudit.builder()
                 .payment(payment)
                 .event(event)
-                .gatewayPayload(notes)
+                .gatewayPayload(jsonPayload)
                 .build();
         paymentAuditRepository.save(audit);
     }
