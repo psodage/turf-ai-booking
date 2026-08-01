@@ -40,6 +40,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.math.BigDecimal;
 import java.time.Duration;
@@ -208,9 +210,15 @@ public class BookingService {
             // Audit log
             logAudit(booking, null, BookingStatus.HOLD, customer, "Booking hold created");
 
-            // Temporary Demo: Schedule auto-confirmation after 30 seconds
+            // Temporary Demo: Schedule auto-confirmation after transaction commits
             if (demoAutoConfirmScheduler != null) {
-                demoAutoConfirmScheduler.scheduleAutoConfirmation(booking.getId());
+                final UUID confirmedBookingId = booking.getId();
+                TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+                    @Override
+                    public void afterCommit() {
+                        demoAutoConfirmScheduler.scheduleAutoConfirmation(confirmedBookingId);
+                    }
+                });
             }
 
             return BookingHoldResponse.builder()

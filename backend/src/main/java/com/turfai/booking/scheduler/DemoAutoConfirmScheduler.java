@@ -28,21 +28,31 @@ public class DemoAutoConfirmScheduler {
     }
 
     public void scheduleAutoConfirmation(UUID bookingId) {
-        log.info("Demo Mode: Scheduling fast 5-second auto-confirmation for booking ID: {}", bookingId);
+        log.info("Demo Mode: Scheduling 5-second auto-confirmation for booking ID: {}", bookingId);
         scheduler.schedule(() -> {
-            try {
-                log.info("Demo Mode: Executing auto-confirmation for booking ID: {}", bookingId);
-                bookingService.confirmBooking(bookingId, "DEMO_AUTO_CONFIRM");
-            } catch (Exception ex) {
-                log.warn("Demo Mode: First attempt for booking ID {} failed: {}. Retrying in 2 seconds...", bookingId, ex.getMessage());
-                scheduler.schedule(() -> {
-                    try {
-                        bookingService.confirmBooking(bookingId, "DEMO_AUTO_CONFIRM");
-                        log.info("Demo Mode: Auto-confirmation succeeded on retry for booking ID: {}", bookingId);
-                    } catch (Exception retryEx) {
-                        log.error("Demo Mode: Error during auto-confirmation retry for booking ID: {}", bookingId, retryEx);
+            int maxRetries = 3;
+            for (int attempt = 1; attempt <= maxRetries; attempt++) {
+                try {
+                    log.info("Demo Mode: Executing auto-confirmation for booking ID: {} (attempt {}/{})", bookingId, attempt, maxRetries);
+                    bookingService.confirmBooking(bookingId, "DEMO_AUTO_CONFIRM");
+                    log.info("Demo Mode: Auto-confirmation succeeded for booking ID: {}", bookingId);
+                    return;
+                } catch (Exception ex) {
+                    if (attempt < maxRetries) {
+                        long backoffMs = attempt * 2000L;
+                        log.warn("Demo Mode: Attempt {}/{} failed for booking ID {}: {}. Retrying in {}ms...",
+                                attempt, maxRetries, bookingId, ex.getMessage(), backoffMs);
+                        try {
+                            Thread.sleep(backoffMs);
+                        } catch (InterruptedException ie) {
+                            Thread.currentThread().interrupt();
+                            log.error("Demo Mode: Retry interrupted for booking ID: {}", bookingId);
+                            return;
+                        }
+                    } else {
+                        log.error("Demo Mode: All {} attempts exhausted for booking ID: {}", maxRetries, bookingId, ex);
                     }
-                }, 2, TimeUnit.SECONDS);
+                }
             }
         }, 5, TimeUnit.SECONDS);
     }
